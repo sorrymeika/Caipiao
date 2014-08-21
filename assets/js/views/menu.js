@@ -10,6 +10,7 @@
         animateOutClassName: 'anim-left-out',
         events: {
             'tap': 'toBack',
+            'swipeLeft': 'back',
             'tap .J_Index': function () {
                 this.to('/');
             },
@@ -24,6 +25,15 @@
                     easingIn: this.animateInClassName,
                     easingOut: this.animateOutClassName
                 });
+            },
+            'tap .J_Signout': function (e) {
+                localStorage.authCookies=null;
+                localStorage.auth=null;
+                localStorage.UserName=null;
+
+                $(e.currentTarget).hide();
+
+                sl.tip('退出成功！');
             }
         },
         toBack: function (e) {
@@ -33,6 +43,8 @@
         },
         onCreate: function () {
             var that=this;
+
+            that.$('.J_Signout')[localStorage.authCookies?'show':'hide']();
         },
         playUnderlayer: function (underlayer) {
             underlayer.$el.addClass('stop');

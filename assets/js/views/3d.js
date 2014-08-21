@@ -1,4 +1,4 @@
-﻿define('views/3d',['zepto','ui/sl','app','views/loading','util'],function(require,exports,module) {
+﻿define('views/3d',['zepto','ui/sl','app','views/loading','util'],function (require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
@@ -40,7 +40,7 @@
             'tap .J_Clear': 'clear',
             'tap .J_Random': 'random',
             'tap .J_RandomRed': 'randomRed',
-            'tap .J_TypeCon li': function(e) {
+            'tap .J_TypeCon li': function (e) {
                 var $target=$(e.currentTarget);
 
                 $target.addClass('curr').siblings('.curr').removeClass('curr');
@@ -56,12 +56,12 @@
             }
         },
 
-        showType: function() {
+        showType: function () {
             this.$('.J_Type,.J_TypeCon').toggleClass('visible');
             this.$('header').toggleClass('type_visible');
         },
 
-        buy: function() {
+        buy: function () {
             var that=this,
                 betData="",
                 flag=true,
@@ -71,7 +71,7 @@
                 typeIndex=that.$('.J_TypeCon li.curr').index();
 
             if(typeIndex==0) {
-                that.$red.each(function() {
+                that.$red.each(function () {
                     var $items=$(this).find('em.curr');
 
                     if($items.length==0) {
@@ -81,7 +81,7 @@
                     }
 
                     codes02+=util.pad($items.length,2);
-                    $items.each(function() {
+                    $items.each(function () {
                         codes+=util.pad(this.innerHTML,2);
                         codes02+=util.pad(this.innerHTML,2);
                     });
@@ -94,7 +94,7 @@
                 }
 
             } else if(typeIndex==1) {
-                that.$('.js_group_cont'+typeIndex+' .redBallList').each(function(i) {
+                that.$('.js_group_cont'+typeIndex+' .redBallList').each(function (i) {
                     var $items=$(this).find('em.curr');
 
                     if($items.length==0) {
@@ -108,6 +108,35 @@
                     }
                 });
                 betData="02|01|0001|"+codes;
+
+            } else if(typeIndex==2) {
+                that.$('.js_group_cont'+typeIndex+' .redBallList').each(function (i) {
+                    var $items=$(this).find('em.curr');
+
+                    if($items.length<2) {
+                        flag=false;
+                    }
+
+                    codes02+=util.pad($items.length,2);
+                    $items.each(function () {
+                        codes02+=util.pad(this.innerHTML,2);
+                    });
+                });
+                betData="02|06|0001|"+codes02;
+            } else if(typeIndex==3) {
+                that.$('.js_group_cont'+typeIndex+' .redBallList').each(function (i) {
+                    var $items=$(this).find('em.curr');
+
+                    if($items.length<3) {
+                        flag=false;
+                    }
+
+                    codes02+=util.pad($items.length,2);
+                    $items.each(function () {
+                        codes02+=util.pad(this.innerHTML,2);
+                    });
+                });
+                betData="03|06|0001|"+codes02;
             } else {
                 flag=false;
             }
@@ -126,10 +155,10 @@
 
             that.to('/3dBuy.html');
         },
-        random: function() {
+        random: function () {
             this.randomRed();
         },
-        randomRed: function() {
+        randomRed: function () {
             var that=this;
 
             that.$red.find('em.curr').removeClass('curr');
@@ -139,7 +168,7 @@
             }
 
             var i=3;
-            that.redTimer=setInterval(function() {
+            that.redTimer=setInterval(function () {
 
                 var num=Math.round(Math.random()*8);
 
@@ -158,10 +187,10 @@
             },100);
 
         },
-        clear: function() {
+        clear: function () {
             this.$('.ballPool.red .bd em.curr').removeClass('curr');
         },
-        selectRed: function(e) {
+        selectRed: function (e) {
             var $target=$(e.currentTarget);
             $target.toggleClass('curr');
 
@@ -169,11 +198,11 @@
                 $target.closest('p').siblings('p').find('em.curr').removeClass('curr');
             }
         },
-        selectBlue: function(e) {
+        selectBlue: function (e) {
             $(e.currentTarget).toggleClass('curr');
         },
         template: 'views/3d.html',
-        onCreate: function() {
+        onCreate: function () {
             var that=this,
                 html="<li>";
 
@@ -197,7 +226,7 @@
 
             that.$el.loading('load',{
                 url: '/api/CPService/QueryGameXspar/?ct=json&gameid=10002&wagerissue=',
-                success: function(res) {
+                success: function (res) {
 
                     that.$('.js_curPhase').html(res.Data[0].WagerIssue);
                     var endTime=new Date(res.Data[0].DrawEndTime.replace(/T|\:/,'-').split('-')),
@@ -210,7 +239,7 @@
                     } else {
                         that.$('.js_leftTime').html("投注剩余"+that.parseTime(leftTime));
 
-                        that.interval=setInterval(function() {
+                        that.interval=setInterval(function () {
                             leftTime--;
                             if(leftTime<=0) {
                                 that.isOver=true;
@@ -223,10 +252,10 @@
                         },1000);
                     }
                 },
-                error: function(xhr) {
+                error: function (xhr) {
                     if(xhr.status==500||xhr.status==401) {
                         this.msg('还未登录...');
-                        setTimeout(function() {
+                        setTimeout(function () {
                             that.to('/login.html');
                         },1000);
                     } else
@@ -234,7 +263,7 @@
                 }
             });
         },
-        parseTime: function(s) {
+        parseTime: function (s) {
             var h=Math.floor(s/(60*60));
             s=s-h*60*60;
             m=Math.floor(s/60);
@@ -242,12 +271,12 @@
 
             return h+"时"+m+"分"+s+"秒";
         },
-        onStart: function() {
+        onStart: function () {
         },
-        onResume: function() {
+        onResume: function () {
             this.clear();
         },
-        onDestory: function() {
+        onDestory: function () {
             this.interval&&clearInterval(this.interval);
         }
     });

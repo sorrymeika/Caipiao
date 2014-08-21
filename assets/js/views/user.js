@@ -54,6 +54,7 @@
                         },
                         error: function (xhr) {
                             if(xhr.status==500||xhr.status==401) {
+                                sl.tip('还未登录...');
                                 this.msg('还未登录...');
                                 setTimeout(function () {
                                     that.to('/login.html');

@@ -32,6 +32,13 @@
             }
             return a/b;
         },
+        A: function (x,y) {
+            var a=1;
+            for(var i=x;i>x-y;i--) {
+                a*=i;
+            }
+            return a;
+        },
         formatDate: function (d,f) {
             if(typeof d=="string"&&/^\/Date\(\d+\)\/$/.test(d)) {
                 d=new Function("return new "+d.replace(/\//g,''))();

@@ -63,7 +63,7 @@
                     resultCode=[],
                     codes;
 
-                $.each(threedDBetData,function(i,code) {
+                $.each(threedDBetData,function (i,code) {
                     codes=code.split('|');
                     codes[2]=util.pad(that.times,4);
                     resultCode.push(codes.join('|'));
@@ -187,7 +187,7 @@
 
                     var itemData={
                         type: betData[1],
-                        typeName: betData[1]=='01'?'单式':'组包号'
+                        typeName: betData[0]=='01'&&betData[1]=='01'?'单式':betData[0]=='01'&&betData[1]=='02'?'复式':betData[0]=='02'&&betData[1]=='01'?'组3单式':betData[0]=='02'&&betData[1]=='06'?'组3复式':"组6"
                     },
                     replaceCode=function (codes) {
                         return codes.replace(/\d{2}/g,function (r) {
@@ -195,13 +195,13 @@
                         }).replace(/&nbsp;&nbsp;$/,'')
                     };
 
-                    if(betData[1]=='01') {
+                    if(betData[0]=='01'&&betData[1]=='01') {
                         itemData.num=1;
 
-                        itemData.red=betData[3].substr(0,12);
+                        itemData.red=betData[3].substr(0,6);
                         itemData.red=replaceCode(itemData.red);
 
-                    } else {
+                    } else if(betData[0]=='01'&&betData[1]=='02') {
                         var num=1,codes='',start=0;
 
                         for(var i=0,red;i<3;i++) {
@@ -209,12 +209,24 @@
                             start+=2;
                             codes+=red==1?betData[3].substr(start,red*2)+'&nbsp;':('('+replaceCode(betData[3].substr(start,red*2))+')');
                             start+=red*2;
-
                             num*=red;
                         }
 
                         itemData.num=num;
                         itemData.red=codes;
+                    } else if(betData[0]=='02'&&betData[1]=='01') {
+                        itemData.num=1;
+
+                        itemData.red=betData[3].substr(0,6);
+                        itemData.red=replaceCode(itemData.red);
+                    } else if(betData[0]=='02'&&betData[1]=='06') {
+                        itemData.num=util.A(parseInt(betData[3].substr(0,2)),2);
+
+                        itemData.red=replaceCode(betData[3].substr(2,betData[3].length-2));
+                    } else if(betData[0]=='03'&&betData[1]=='06') {
+                        itemData.num=util.C(parseInt(betData[3].substr(0,2)),3);
+
+                        itemData.red=replaceCode(betData[3].substr(2,betData[3].length-2));
                     }
 
                     total+=itemData.num;
