@@ -1,0 +1,22 @@
+﻿<header><em class="ico-back J_Back" hl></em><h1>福利彩票</h1></header>
+<section id="main" class="main">
+    
+</section>
+<script id="order" type="text/template">
+    <ul class="prizeinfo">
+        <li>${GameID=="10001"?"双色球":GameID=="10003"?"七乐彩":GameID=="10002"?"3D":GameID=="35004"?"快三":GameID=="90015"?"15选5":GameID=="90016"?"福彩6+1":"其他"}${WagerIssue}期</li>
+        <li>状态：${OrderStateCode=="00000"?"出票成功":OrderStateCode=="0"?"未提交":OrderStateCode=="1"?"已提交":OrderStateCode=="2"?"已注销":"未中奖"}</li>
+        {%if (Win_Money>0)%}
+        <li>中奖金额：${Win_Money}元</li>
+        {%/if%}
+        <li id="prize" data-id="${GameID}"></li>
+    </ul>
+    <div class="prizelist">
+        <div class="hd">选号详情</div>
+        <ul class="table">
+            {%each(j,code) codes%}
+            <li><p>${code.typeName}</p><p>${code.times}倍</p><p>${code.num}注</p><p>{%html code.red%} {%html code.blue%}</p></li>
+            {%/each%}
+        </ul>
+    </div>
+</script>
