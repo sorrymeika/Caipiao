@@ -125,11 +125,13 @@ ul.table li > p { display: table-cell; text-align: center; padding-top: 5px; }
 .header_type {-webkit-transition: height 300ms ease 0ms;}
 .type_visible { height: 85px; }
 
+
 .selType { position: absolute; display: -webkit-box; top: 50px; left: 50%; background: #fff; width: 140px; line-height: 35px; overflow: hidden; text-align: center; height: 0px; -webkit-transition: all 300ms ease 0ms; color:#333; }
-.selType li { border: 1px solid #bebebe; right: 50%; background: #fff; font-size: 13px; width: 50px; -webkit-box-flex: 1; }
+.selType li { border: 1px solid #bebebe; border-right: 0px; right: 50%; background: #fff; font-size: 13px; width: 50px; -webkit-box-flex: 1; }
 .selType li.curr { color: #b7152d; }
-.selType li:first-child { border-right: 0px; }
+.selType li:last-child { border-right: 1px solid #bebebe; }
 .selType.visible { height: 35px; top: 40px; }
+.selType3d { width: 220px; left: 25%; }
 
 .ballPool { margin: 0 10px; padding: 10px 0 0 0; }
 .ballPool .hd { padding-left: 10px; font-size: 12px; height: 25px; background: #fff; border-radius: 10px; border: 1px solid #9e9e9d; line-height: 25px; }
