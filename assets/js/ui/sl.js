@@ -303,9 +303,13 @@
                 if(route) {
                     that._loadActivity(route);
                 }
-            } else if(url!=that.get(that.length-1).route.url) {
-                for(var i=index+1;i<=that.length-2;i++) {
-                    that.get(i).finish();
+            } else {
+                var removedActs=that.activities.splice(index+1,that.length-index-2);
+                that.history.splice(index+1,that.length-index-2);
+
+                for(var i=removedActs.length-1;i>=0;i--) {
+                    that.length--;
+                    removedActs[i].finish();
                 }
                 var activity=that.get(that.length-1);
                 activity.finish();
@@ -371,10 +375,11 @@
             var that=this;
             var index=(typeof url=="number")?url:that.indexOf(url);
 
-            that.activities.splice(index,1);
-            that.history.splice(index,1);
-            that.length--;
-
+            if(index!= -1) {
+                that.activities.splice(index,1);
+                that.history.splice(index,1);
+                that.length--;
+            }
             return that;
         },
         _add: function(activity) {
@@ -529,6 +534,9 @@
             'touchend,touchcancel': function(e) {
                 this._elHl&&this._elHl.removeClass('active');
                 this._elHl=null;
+            },
+            'tap [data-href]': function(e) {
+                this.to($(e.currentTarget).attr('data-href'));
             }
         },
         className: 'view',
@@ -824,7 +832,7 @@
             if(handler) {
                 this._bind(selector,evt,handler);
             } else {
-                this.bind(evt,handler);
+                this.bind(selector,evt);
             }
             return this;
         },
@@ -915,7 +923,7 @@
                 opacity: 0
             }).animate({
                 scale: "1,1",
-                opacity: 0.6
+                opacity: 0.9
             },200,'ease-out');
 
             return me;
@@ -923,7 +931,6 @@
         hide: function() {
             var me=this,
                 tip=me._tip;
-
 
             if(!me._visible) {
                 return;

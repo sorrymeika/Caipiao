@@ -1600,7 +1600,8 @@ window.$ === undefined && (window.$ = Zepto)
   }
 
   $(document).ready(function(){
-    var now, delta, deltaX = 0, deltaY = 0, firstTouch, _isPointerType
+    var now, delta, deltaX = 0, deltaY = 0, firstTouch, _isPointerType,
+        events='ontouchstart' in document?['touchstart','touchmove','touchend','touchcancel']:['mousedown','mousemove','mouseup','mouseleave'];
 
     if ('MSGesture' in window) {
       gesture = new MSGesture()
@@ -1616,7 +1617,7 @@ window.$ === undefined && (window.$ = Zepto)
           touch.el.trigger('swipe'+ swipeDirectionFromVelocity)
         }
       })
-      .on('touchstart MSPointerDown pointerdown', function(e){
+      .on(events[0]+' MSPointerDown pointerdown', function(e){
         if((_isPointerType = isPointerEventType(e, 'down')) &&
           !isPrimaryTouch(e)) return
 
@@ -1642,10 +1643,10 @@ window.$ === undefined && (window.$ = Zepto)
         if (gesture && _isPointerType) gesture.addPointer(e.pointerId);
 
       })
-      .on('touchmove MSPointerMove pointermove', function(e){
-        if((_isPointerType = isPointerEventType(e, 'move')) &&
-          !isPrimaryTouch(e)) return
-        firstTouch = _isPointerType||isMouseEventType(e, 'move') ? e : e.touches[0]
+      .on(events[1]+' MSPointerMove pointermove', function(e){
+        if(((_isPointerType = isPointerEventType(e, 'move')) &&
+          !isPrimaryTouch(e))||(e.type=='mousemove'&&!('last' in touch))) return
+        firstTouch = _isPointerType||e.type=='mousemove' ? e : e.touches[0]
         cancelLongTap()
         touch.x2 = firstTouch.pageX
         touch.y2 = firstTouch.pageY
@@ -1653,7 +1654,7 @@ window.$ === undefined && (window.$ = Zepto)
         deltaX += Math.abs(touch.x1 - touch.x2)
         deltaY += Math.abs(touch.y1 - touch.y2)
       })
-      .on('touchend MSPointerUp pointerup', function(e){
+      .on(events[2]+' MSPointerUp pointerup', function(e){
         if((_isPointerType = isPointerEventType(e, 'up')) &&
           !isPrimaryTouch(e)) return
         cancelLongTap()
@@ -1670,6 +1671,7 @@ window.$ === undefined && (window.$ = Zepto)
 
         // normal tap
         else if ('last' in touch)
+
           // don't fire tap when delta position changed by more than 30 pixels,
           // for instance when moving to a point and back to origin
           if (deltaX < 30 && deltaY < 30) {
@@ -1707,7 +1709,7 @@ window.$ === undefined && (window.$ = Zepto)
       // when the browser window loses focus,
       // for example when a modal dialog is shown,
       // cancel all ongoing events
-      .on('touchcancel MSPointerCancel pointercancel', cancelAll)
+      .on(events[3]+' MSPointerCancel pointercancel', cancelAll)
 
     // scrolling the window indicates intention of the user
     // to scroll, not tap or swipe, so cancel all ongoing events
