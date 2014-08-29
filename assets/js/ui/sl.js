@@ -770,15 +770,17 @@
     var View=function(selector,options) {
         var me=this;
 
+
         if(me.template&&!options) {
             options=selector;
-            selector=tmpl(me.template,options);
-        }
+            me.options=$.extend({},me.options,options);
+
+            selector=tmpl(me.template,me.options);
+        } else
+            me.options=$.extend({},me.options,options);
 
         me.$el=$(selector);
         me.el=me.$el[0];
-
-        me.options=$.extend({},me.options,options);
 
         if(me.events) {
             $.each(me.events,function(evt,f) {

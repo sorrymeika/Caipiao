@@ -1,173 +1,115 @@
-﻿define('views/k3',['zepto','ui/sl','app','views/loading','util'],function (require,exports,module) {
+﻿define('views/k3',['zepto','ui/sl','app','views/loading','views/selector','util'],function(require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
         util=require('util'),
-        Loading=require('views/loading');
+        Loading=require('views/loading'),
+        Selector=require('views/selector');
 
-    module.exports=sl.Activity.extend({
-        events: {
-            'tap .J_Back': 'back',
-            'tap .ballPool.red .bd em': 'selectRed',
-            'tap .J_Buy': "buy",
-            'tap .J_Clear': 'clear',
-            'tap .J_Random': 'random',
-            'tap .J_RandomRed': 'randomRed'
-        },
-
-        buy: function () {
-            var that=this,
-                betData="",
-                flag=true,
-                type='01',
-                codes='',
-                codes02='';
-
-            that.$red.each(function () {
-                var $items=$(this).find('em.curr');
-
-                if($items.length==0) {
-                    flag=false;
-                } else if($items.length>1) {
-                    type='02';
-                }
-
-                codes02+=util.pad($items.length,2);
-                $items.each(function () {
-                    codes+=util.pad(this.innerHTML,2);
-                    codes02+=util.pad(this.innerHTML,2);
-                });
-            });
-
-            if(!flag) {
-                sl.tip("请至少选择一注");
-                return;
-            }
-
-            if(type=='01') {
-                betData="01|01|0001|"+codes;
-            } else {
-                betData="01|02|0001|"+codes02;
-
-            }
-
-            console.log(betData);
-
-            if(localStorage.k3BetData)
-                localStorage.k3BetData+='#'+betData;
-            else
-                localStorage.k3BetData=betData;
-
-            that.to('/k3Buy.html');
-        },
-        random: function () {
-            this.randomRed();
-        },
-        randomRed: function () {
-            var that=this;
-
-            that.$red.find('em.curr').removeClass('curr');
-
-            if(that.redTimer) {
-                clearInterval(that.redTimer);
-            }
-
-            var i=3;
-            that.redTimer=setInterval(function () {
-
-                var num=Math.round(Math.random()*8);
-
-                console.log(i,num);
-
-                if(!that.$red.eq(i-1).find('em').eq(num).hasClass('curr')) {
-                    that.$red.eq(i-1).find('em').eq(num).addClass('curr');
-                    i--;
-                }
-
-                if(i<=0) {
-                    clearInterval(that.redTimer);
-                    that.redTimer=null;
-                }
-
-            },100);
-
-        },
-        clear: function () {
-            this.$('.ballPool.red .bd em.curr').removeClass('curr');
-        },
-        selectRed: function (e) {
-            var $target=$(e.currentTarget);
-            $target.toggleClass('curr');
-        },
-        selectBlue: function (e) {
-            $(e.currentTarget).toggleClass('curr');
-        },
-        template: 'views/k3.html',
-        onCreate: function () {
-            var that=this,
-                html="<li>";
-
-            for(var i=1;i<=6;i++) {
-                html+='<p><em data-red="'+i+'">'+i+'</em></p>';
-            }
-            that.$('.J_RedList').append(html+"</li>");
-
-            that.$red=that.$('.J_RedList');
-
-            that.$el.loading('load',{
-                url: '/api/CPService/QueryGameXspar/?ct=json&gameid=35004&wagerissue=',
-                success: function (res) {
-
-                    that.$('.js_curPhase').html(res.Data[0].WagerIssue);
-                    var endTime=new Date(res.Data[0].DrawEndTime.replace(/T|\:/,'-').split('-')),
-                        leftTime=(endTime-new Date())/1000;
-
-                    if(leftTime<0) {
-                        that.$('.js_leftTime').html("投注已结束");
-                        that.isOver=true;
-
-                    } else {
-                        that.$('.js_leftTime').html("投注剩余"+that.parseTime(leftTime));
-
-                        that.interval=setInterval(function () {
-                            leftTime--;
-                            if(leftTime<=0) {
-                                that.isOver=true;
-                                that.$('.js_leftTime').html("投注已结束");
-                                clearInterval(that.interval);
-                                that.interval=null;
-                            } else
-                                that.$('.js_leftTime').html("投注剩余"+that.parseTime(leftTime));
-
-                        },1000);
-                    }
-                },
-                error: function (xhr) {
-                    if(xhr.status==500||xhr.status==401) {
-                        this.msg('还未登录...');
-                        setTimeout(function () {
-                            that.to('/login.html');
-                        },1000);
-                    } else
-                        this.msg('网络错误');
-                }
-            });
-        },
-        parseTime: function (s) {
-            var h=Math.floor(s/(60*60));
-            s=s-h*60*60;
-            m=Math.floor(s/60);
-            s=Math.floor(s-m*60);
-
-            return h+"时"+m+"分"+s+"秒";
-        },
-        onStart: function () {
-        },
-        onResume: function () {
-            this.clear();
-        },
-        onDestory: function () {
-            this.interval&&clearInterval(this.interval);
-        }
+    module.exports=Selector.extend({
+        title: '快3选号',
+        GameID: '35004',
+        BetDataKey: 'k3BetData',
+        buyUrl: '/k3Buy.html',
+        tabs: [{
+            name: '和值',
+            randomFlag: true,
+            types: [{
+                type: '01|01',
+                condition: '$0==1',
+                single: true,
+                codes: '$codes0'
+            },{
+                type: '01|02',
+                condition: '$0>1',
+                codes: '$0$codes0'
+            }],
+            balls: [{
+                color: 'red',
+                title: '一号',
+                msg: '至少选择1个',
+                randomFlag: true,
+                randomNum: 1,
+                range: [3,18]
+            }]
+        },{
+            name: '三同号单选',
+            randomFlag: true,
+            types: [{
+                type: '03|01',
+                condition: '$0==1',
+                codes: '$codes0'
+            }],
+            balls: [{
+                color: 'red',
+                title: '选号',
+                msg: '选择1个',
+                randomFlag: true,
+                randomNum: 1,
+                range: [1,6]
+            }]
+        },{
+            name: '三同号通选',
+            randomFlag: false,
+            types: [{
+                type: '02|01',
+                condition: '$0==1',
+                codes: ''
+            }],
+            balls: [{
+                color: 'red',
+                title: '选号',
+                msg: '至少选择1个',
+                randomFlag: true,
+                randomNum: 1,
+                range: [0,0],
+                codes: [''],
+                textArray: ['通选']
+            }]
+        },{
+            name: '二同号单选',
+            randomFlag: true,
+            types: [{
+                type: '05|01',
+                condition: '$0==1&&$1==1',
+                codes: '$codes0$codes0$codes1'
+            }],
+            balls: [{
+                color: 'red',
+                title: '同号',
+                msg: '至少选择1个',
+                randomFlag: true,
+                single: true,
+                randomNum: 1,
+                range: [1,6],
+                textArray: ['11','22','33','44','55','66']
+            },{
+                color: 'red',
+                title: '不同号',
+                msg: '至少选择1个',
+                single: true,
+                randomFlag: true,
+                randomNum: 1,
+                range: [1,6]
+            }]
+        },{
+            name: '二同号复选',
+            randomFlag: false,
+            types: [{
+                type: '04|02',
+                condition: '$0>1||$1>1',
+                codes: '$0$codes0'
+            }],
+            balls: [{
+                color: 'red',
+                title: '同号',
+                msg: '至少选择2个',
+                randomFlag: false,
+                single: true,
+                randomNum: 1,
+                range: [1,6],
+                textArray: ['11*','22*','33*','44*','55*','66*']
+            }]
+        }]
     });
 });

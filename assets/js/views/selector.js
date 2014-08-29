@@ -12,63 +12,7 @@
         GameID: '10001',
         BetDataKey: 'ssqBetData',
         buyUrl: '/ssqBuy.html',
-        tabs: [{
-            name: '普通投注',
-            randomFlag: true,
-            types: [{
-                type: '00|01',
-                condition: '$0==6&&$1==1',
-                single: true,
-                codes: '$codes0$codes1'
-            },{
-                type: '00|02',
-                condition: '$0>=7||$1>=2',
-                codes: '$0$codes0$1$codes1'
-            }],
-            balls: [{
-                color: 'red',
-                title: '红球',
-                msg: '至少选择6个红球',
-                randomFlag: true,
-                randomNum: 6,
-                range: [1,33]
-            },{
-                color: 'blue',
-                title: '蓝球',
-                msg: '请至少选择1个蓝球',
-                randomFlag: true,
-                randomNum: 1,
-                range: [1,16]
-            }]
-        },{
-            name: '胆拖投注',
-            randomFlag: false,
-            errors: [['$0>5','胆码不能超过5个']],
-            types: [{
-                type: '00|03',
-                condition: '$0>=1&&$0<=5&&($0+$1>=7)&&$2>=1',
-                codes: '$0$codes0$1$codes1'
-            }],
-            balls: [{
-                color: 'red',
-                title: '胆码-红球',
-                msg: '至少选择1个，最多选择5个',
-                randomFlag: false,
-                range: [1,33]
-            },{
-                color: 'red',
-                title: '拖码-红球',
-                msg: '至少选择2个红球',
-                randomFlag: false,
-                range: [1,33]
-            },{
-                color: 'blue',
-                title: '拖码-蓝球',
-                msg: '请选择1个蓝球',
-                randomFlag: false,
-                range: [1,16]
-            }]
-        }],
+        tabs: [],
         events: {
             'tap .J_Back': 'back',
             'tap .js_red_ball_pool em': 'selectRed',
@@ -82,7 +26,7 @@
             'tap .J_Random': function(e) {
                 var that=this;
 
-                that.$('.js_ball_pool[data-num]').each(function() {
+                that.currentType.$el.find('.js_ball_pool[data-num]').each(function() {
                     that._random($(this));
                 });
             }
@@ -106,7 +50,7 @@
                     betData='';
 
                 selected.each(function() {
-                    betData+=util.pad(this.innerHTML,2);
+                    betData+=util.pad($(this).attr('data-code'),2);
                 });
 
                 pools.push([selected.length,betData]);
@@ -160,6 +104,8 @@
             }).replace(/\,/g,function() {
                 return '';
             });
+
+            console.log(pools,betCodes);
 
             betCodes=type.type+'|0001|'+betCodes;
 
@@ -230,7 +176,7 @@
                     text: tab.name
                 });
 
-                html='<div class="js_type_cont" style="display:'+(i==0?'block':'none')+'">';
+                html='<div class="js_type_cont'+(!tab.repeat?' js_no_repeat':'')+'" style="display:'+(i==0?'block':'none')+'">';
 
                 $.each(tab.balls,function(i,ballOpt) {
 
@@ -238,11 +184,14 @@
                         <div class="hd">'+(ballOpt.randomFlag?'<span class="J_RandomOne">随机</span>':'')+' <em class="J_MsgTitle">'+ballOpt.title+'</em>\
                             <i class="J_Msg">'+ballOpt.msg+'</i> </div>\
                         <div class="bd">\
-                            <ul class="table redBallList js_'+ballOpt.color+'_ball_pool"><li>';
+                            <ul class="table redBallList js_'+ballOpt.color+'_ball_pool'+(ballOpt.single?' js_single':'')+'"><li>';
 
+                    var count=1;
                     for(var i=ballOpt.range[0],n=ballOpt.range[1];i<=n;i++) {
-                        html+='<p><em data-'+ballOpt.color+'="'+i+'">'+i+'</em></p>';
-                        if(i%8==0) { html+="</li><li>"; }
+                        html+='<p><em data-'+ballOpt.color+'="'+i+'" data-code="'+(ballOpt.codes?ballOpt.codes[count-1]:i)+'">'+(ballOpt.textArray?ballOpt.textArray[count-1]:i)+'</em></p>';
+                        if(count%8==0) { html+="</li><li>"; }
+
+                        count++
                     }
 
                     html+='</ul>\
@@ -267,18 +216,20 @@
 
                         that.currentType=that.tabs[index];
                         that.currentType.$el.show().siblings('.js_type_cont').hide();
+                        that.$('.J_Header').html(that.title+'-'+that.currentType.name);
 
                         that.$('.J_Random')[that.currentType.randomFlag?'show':'hide']();
                     }
                 });
-            }
+            } else
+                that.$('.J_Type').hide();
 
             that._loadData();
         },
         _loadData: function() {
             var that=this;
 
-            that.$el.loading('load',{
+            $('body').loading('load',{
                 url: '/api/CPService/QueryGameXspar/?ct=json&gameid='+that.GameID+'&wagerissue=',
                 success: function(res) {
 
@@ -308,12 +259,30 @@
                 },
                 error: function(xhr) {
                     if(xhr.status==500||xhr.status==401) {
-                        this.msg('还未登录...');
-                        setTimeout(function() {
-                            that.to('/login.html');
-                        },1000);
-                    } else
+                        sl.confirm({
+                            title: '登录',
+                            content: '您还未登录,是否登录',
+                            okText: '立即登录'
+
+                        },function() {
+                            app.exec('login',function(res) {
+                                localStorage.auth=JSON.stringify(res);
+                                localStorage.UserName=res.UserName;
+                                localStorage.authCookies=".ASPXCOOKIEWebApi="+res[".ASPXCOOKIEWebApi"]+"; ASP.NET_SessionId="+res["ASP.NET_SessionId"];
+
+                                that.to('/');
+                            });
+                        },function() {
+                            that.to('/');
+                        });
+                    } else {
+                        var ld=this;
                         this.msg('网络错误');
+                        this.$loading.one('tap',function() {
+                            that.to('/');
+                            ld.hide();
+                        });
+                    }
                 }
             });
         },
@@ -323,9 +292,13 @@
         selectRed: function(e) {
             var $target=$(e.currentTarget);
             if(!$target.hasClass('curr')) {
-                this.$('[data-red="'+$target.attr('data-red')+'"].curr').removeClass('curr');
+                this.$('.js_no_repeat [data-red="'+$target.attr('data-red')+'"].curr').removeClass('curr');
             }
             $target.toggleClass('curr');
+
+            if($target.closest('.redBallList').hasClass('js_single')) {
+                $target.closest('p').siblings('p').find('em.curr').removeClass('curr');
+            }
         },
         selectBlue: function(e) {
             $(e.currentTarget).toggleClass('curr');
@@ -344,6 +317,7 @@
             this.clear();
         },
         onDestory: function() {
+            $('body').loading('abort');
             this.interval&&clearInterval(this.interval);
         }
     });

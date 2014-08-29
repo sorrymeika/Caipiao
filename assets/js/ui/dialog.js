@@ -3,7 +3,7 @@
         sl=require('ui/sl');
 
     var mask=null,
-        template='<div class="dialog"><div class="dialog-title"><h3>${title}</h3></div><div class="dialog-content">{%html content%}</div><div class="dialog-btns"><a class="dialog-btn js_hide">取消</a><a class="dialog-btn js_ok">确定</a></div></div>';
+        template='<div class="dialog"><div class="dialog-title"><h3>${title}</h3></div><div class="dialog-content">{%html content%}</div><div class="dialog-btns"><a class="dialog-btn js_hide">${cancelText}</a><a class="dialog-btn js_ok">${okText}</a></div></div>';
 
     var Dialog=sl.View.extend({
         events: {
@@ -13,7 +13,9 @@
         template: template,
         options: {
             title: "提示",
-            content: null
+            content: null,
+            cancelText: '取消',
+            okText: '确定'
         },
 
         title: function(title) {
@@ -87,21 +89,31 @@
 
     var _confirm=null;
 
-    sl.confirm=function(title,text,ok) {
-        if(!ok) {
+    sl.confirm=function(title,text,ok,cancel) {
+        var options={};
+        if($.isPlainObject(title)) {
+            cancel=ok;
             ok=text;
-            text=title,
-            title="确认提示";
+            $.extend(options,title);
+
+        } else if($.isFunction(text)) {
+            cancel=ok;
+            ok=text;
+            options.content=title,
+            options.title="确认提示";
+        } else {
+            options.title=title,
+            options.content=text;
         }
 
         if(!_confirm) {
-            _confirm=new Dialog({
-                title: title,
-                content: text
-            });
+            _confirm=new Dialog(options);
         } else {
-            _confirm.title(title);
-            _confirm.$('.dialog-content').html(text);
+            _confirm.title(options.title);
+            _confirm.$('.dialog-content').html(options.content);
+
+            options.cancelText&&_confirm.$('.js_hide').html(options.cancelText);
+            options.okText&&_confirm.$('.js_ok').html(options.okText);
         }
 
         _confirm.options.onOk=function() {
@@ -109,6 +121,7 @@
         }
 
         _confirm.options.onCancel=function() {
+            cancel&&cancel.call(this);
         }
 
         _confirm.show();

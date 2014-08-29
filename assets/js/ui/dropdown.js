@@ -39,12 +39,16 @@
 
             that.$el.appendTo('body');
 
+            that.$el.on($.fx.transitionEnd,function() {
+                if(that.$el.hasClass('hide')) that.$el.hide();
+            });
+
             that.options.onChange&&that.bind('Change',that.options.onChange);
         },
         show: function() {
             var that=this;
 
-            that.$el.removeClass('hide');
+            that.$el.show().removeClass('hide');
             that.mask.show();
         },
         hide: function() {
@@ -85,8 +89,8 @@
             var that=this,
                 pos=that.$el.offset();
 
-            that.dropdown.pos(pos.left+that.$el.width(),pos.top+that.$el.height());
             that.dropdown.show();
+            that.dropdown.pos(pos.left+that.$el.width(),pos.top+that.$el.height());
         }
     }));
 

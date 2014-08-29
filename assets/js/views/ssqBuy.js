@@ -8,7 +8,7 @@
 
     module.exports=Buy.extend({
         GameID: '10001',
-        template: 'views/ssqBuy.html',
+        title: '双色球投注',
         BetDataKey: 'ssqBetData',
         backUrl: '/ssq.html',
         types: [{
