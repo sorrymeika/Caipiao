@@ -1,4 +1,4 @@
-﻿define('views/selector',['zepto','ui/sl','app','views/loading','util','ui/dropdown'],function(require,exports,module) {
+﻿define('views/selector',['zepto','ui/sl','app','views/loading','util','ui/dropdown'],function (require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
@@ -19,22 +19,22 @@
             'tap .js_blue_ball_pool em': 'selectBlue',
             'tap .J_Clear': 'clear',
             'tap .J_Buy': "buy",
-            'tap .J_RandomOne': function(e) {
+            'tap .J_RandomOne': function (e) {
                 var that=this;
                 that._random($(e.currentTarget).closest('.js_ball_pool'));
             },
-            'tap .J_Random': function(e) {
+            'tap .J_Random': function (e) {
                 var that=this;
 
-                that.currentType.$el.find('.js_ball_pool[data-num]').each(function() {
+                that.currentType.$el.find('.js_ball_pool[data-num]').each(function () {
                     that._random($(this));
                 });
             }
         },
-        _nextStep: function() {
+        _nextStep: function () {
             this.to(this.buyUrl);
         },
-        buy: function() {
+        buy: function () {
             var that=this,
                 opt=that.currentType,
                 $pools=$('.js_ball_pool',opt.$el),
@@ -45,11 +45,11 @@
                 return;
             }
 
-            $.each(opt.balls,function(i) {
+            $.each(opt.balls,function (i) {
                 var selected=$pools.eq(i).find('em.curr'),
                     betData='';
 
-                selected.each(function() {
+                selected.each(function () {
                     betData+=util.pad($(this).attr('data-code'),2);
                 });
 
@@ -61,8 +61,8 @@
                 msg;
 
             if(opt.errors) {
-                $.each(opt.errors,function(i,errorOpt) {
-                    var condition=errorOpt[0].replace(/\$(\d+)/g,function(r0,r1) {
+                $.each(opt.errors,function (i,errorOpt) {
+                    var condition=errorOpt[0].replace(/\$(\d+)/g,function (r0,r1) {
                         return pools[parseInt(r1)][0];
                     });
 
@@ -79,8 +79,8 @@
                 }
             }
 
-            $.each(opt.types,function(i,typeOpt) {
-                var condition=typeOpt.condition.replace(/\$(\d+)/g,function(r0,r1) {
+            $.each(opt.types,function (i,typeOpt) {
+                var condition=typeOpt.condition.replace(/\$(\d+)/g,function (r0,r1) {
                     return pools[parseInt(r1)][0];
                 });
                 if(!eval(condition)) {
@@ -97,11 +97,11 @@
                 return;
             }
 
-            var betCodes=type.codes.replace(/\$(\d+)/g,function(r0,r1) {
+            var betCodes=type.codes.replace(/\$(\d+)/g,function (r0,r1) {
                 return ','+util.pad(pools[parseInt(r1)][0])+',';
-            }).replace(/\$codes(\d+)/g,function(r0,r1) {
+            }).replace(/\$codes(\d+)/g,function (r0,r1) {
                 return pools[parseInt(r1)][1];
-            }).replace(/\,/g,function() {
+            }).replace(/\,/g,function () {
                 return '';
             });
 
@@ -111,7 +111,7 @@
 
             if(type.single) {
                 if(localStorage[that.BetDataKey]&&localStorage[that.BetDataKey].indexOf(type.type)!=0) {
-                    sl.confirm('一笔订单只能包含一种模式注码，是否清除之前注码？',function() {
+                    sl.confirm('一笔订单只能包含一种模式注码，是否清除之前注码？',function () {
                         localStorage[that.BetDataKey]=betCodes;
                         that._nextStep();
                     });
@@ -126,7 +126,7 @@
 
             } else {
                 if(localStorage[that.BetDataKey]) {
-                    sl.confirm('一笔订单只能包含一种模式注码，是否清除之前注码？',function() {
+                    sl.confirm('一笔订单只能包含一种模式注码，是否清除之前注码？',function () {
                         localStorage[that.BetDataKey]=betCodes;
                         that._nextStep();
                     });
@@ -137,7 +137,7 @@
             }
 
         },
-        _random: function($container) {
+        _random: function ($container) {
             var $balls=$container.find('.bd em'),
                 target=$container[0],
                 i=parseInt($container.attr('data-num')),
@@ -149,7 +149,7 @@
                 clearInterval(target._random_timer);
             }
 
-            target._random_timer=setInterval(function() {
+            target._random_timer=setInterval(function () {
 
                 var num=Math.round(Math.random()*max);
 
@@ -165,20 +165,20 @@
 
             },100);
         },
-        onCreate: function() {
+        onCreate: function () {
             var that=this,
                 tabs=[];
 
             that.$('.J_Header').html(that.title);
 
-            $.each(that.tabs,function(i,tab) {
+            $.each(that.tabs,function (i,tab) {
                 tabs.push({
                     text: tab.name
                 });
 
                 html='<div class="js_type_cont'+(!tab.repeat?' js_no_repeat':'')+'" style="display:'+(i==0?'block':'none')+'">';
 
-                $.each(tab.balls,function(i,ballOpt) {
+                $.each(tab.balls,function (i,ballOpt) {
 
                     html+='<div class="'+ballOpt.color+' ballPool js_ball_pool"'+(ballOpt.randomFlag?' data-num="'+ballOpt.randomNum+'"':'')+'>\
                         <div class="hd">'+(ballOpt.randomFlag?'<span class="J_RandomOne">随机</span>':'')+' <em class="J_MsgTitle">'+ballOpt.title+'</em>\
@@ -212,7 +212,7 @@
             if(that.tabs.length>=2) {
                 that.$('.J_Type').dropdown({
                     data: tabs,
-                    onChange: function(e,index) {
+                    onChange: function (e,index) {
 
                         that.currentType=that.tabs[index];
                         that.currentType.$el.show().siblings('.js_type_cont').hide();
@@ -226,12 +226,12 @@
 
             that._loadData();
         },
-        _loadData: function() {
+        _loadData: function () {
             var that=this;
 
             $('body').loading('load',{
                 url: '/api/CPService/QueryGameXspar/?ct=json&gameid='+that.GameID+'&wagerissue=',
-                success: function(res) {
+                success: function (res) {
 
                     that.$('.js_curPhase').html(res.Data[0].WagerIssue);
                     var endTime=new Date(res.Data[0].DrawEndTime.replace(/T|\:/,'-').split('-')),
@@ -244,7 +244,7 @@
                     } else {
                         that.$('.js_leftTime').html("投注剩余"+that.parseTime(leftTime));
 
-                        that.interval=setInterval(function() {
+                        that.interval=setInterval(function () {
                             leftTime--;
                             if(leftTime<=0) {
                                 that.isOver=true;
@@ -257,28 +257,23 @@
                         },1000);
                     }
                 },
-                error: function(xhr) {
+                error: function (xhr) {
                     if(xhr.status==500||xhr.status==401) {
+                        this.hide();
                         sl.confirm({
                             title: '登录',
                             content: '您还未登录,是否登录',
                             okText: '立即登录'
 
-                        },function() {
-                            app.exec('login',function(res) {
-                                localStorage.auth=JSON.stringify(res);
-                                localStorage.UserName=res.UserName;
-                                localStorage.authCookies=".ASPXCOOKIEWebApi="+res[".ASPXCOOKIEWebApi"]+"; ASP.NET_SessionId="+res["ASP.NET_SessionId"];
-
-                                that.to('/');
-                            });
-                        },function() {
+                        },function () {
+                            that.to('/login.html');
+                        },function () {
                             that.to('/');
                         });
                     } else {
                         var ld=this;
                         this.msg('网络错误');
-                        this.$loading.one('tap',function() {
+                        this.$loading.one('tap',function () {
                             that.to('/');
                             ld.hide();
                         });
@@ -286,10 +281,10 @@
                 }
             });
         },
-        clear: function() {
+        clear: function () {
             this.$('.js_ball_pool .bd em.curr').removeClass('curr');
         },
-        selectRed: function(e) {
+        selectRed: function (e) {
             var $target=$(e.currentTarget);
             if(!$target.hasClass('curr')) {
                 this.$('.js_no_repeat [data-red="'+$target.attr('data-red')+'"].curr').removeClass('curr');
@@ -300,10 +295,10 @@
                 $target.closest('p').siblings('p').find('em.curr').removeClass('curr');
             }
         },
-        selectBlue: function(e) {
+        selectBlue: function (e) {
             $(e.currentTarget).toggleClass('curr');
         },
-        parseTime: function(s) {
+        parseTime: function (s) {
             var h=Math.floor(s/(60*60));
             s=s-h*60*60;
             m=Math.floor(s/60);
@@ -311,12 +306,12 @@
 
             return h+"时"+m+"分"+s+"秒";
         },
-        onStart: function() {
+        onStart: function () {
         },
-        onResume: function() {
+        onResume: function () {
             this.clear();
         },
-        onDestory: function() {
+        onDestory: function () {
             $('body').loading('abort');
             this.interval&&clearInterval(this.interval);
         }

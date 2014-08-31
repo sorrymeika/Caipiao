@@ -123,7 +123,7 @@
             appFunc('share');
         },
         url: function (url) {
-            return /^http\:\/\//.test(url)?url:navigator.platform=="Win32"||navigator.platform=="Win64"?'http://localhost:7610/assets/Index.cshtml?path='+encodeURIComponent(url):('http://ms1.962666.cn'+url);
+            return /^http\:\/\//.test(url)?url:navigator.platform=="Win32"||navigator.platform=="Win64"?'/assets/Index.cshtml?path='+encodeURIComponent(url):('http://ms1.962666.cn'+url);
         },
         post: function () {
             var args=slice.call(arguments),

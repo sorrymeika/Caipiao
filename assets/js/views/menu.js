@@ -27,13 +27,17 @@
                 });
             },
             'tap .J_Signout': function (e) {
-                localStorage.authCookies=null;
-                localStorage.auth=null;
-                localStorage.UserName=null;
+                if(!localStorage.authCookies) {
+                    this.to('/login.html');
+                } else {
+                    localStorage.authCookies='';
+                    localStorage.auth='';
+                    localStorage.UserName='';
 
-                $(e.currentTarget).hide();
+                    $(e.currentTarget).html('登录');
 
-                sl.tip('退出成功！');
+                    sl.tip('退出成功！');
+                }
             }
         },
         toBack: function (e) {
@@ -44,7 +48,7 @@
         onCreate: function () {
             var that=this;
 
-            that.$('.J_Signout')[localStorage.authCookies?'show':'hide']();
+            that.$('.J_Signout').show().html(localStorage.authCookies?'退出':'登录');
         },
         playUnderlayer: function (underlayer) {
             underlayer.$el.addClass('stop');
@@ -52,10 +56,10 @@
         onStart: function () {
         },
         onResume: function () {
-            console.log("index onResume");
+            this.$('.J_Signout').show().html(localStorage.authCookies?'退出':'登录');
+
         },
         onDestory: function () {
-            console.log("index onDestory");
         }
     });
 });

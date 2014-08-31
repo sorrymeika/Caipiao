@@ -1,4 +1,4 @@
-﻿define('ui/dialog',['$','ui/sl'],function(require,exports,module) {
+﻿define('ui/dialog',['$','ui/sl'],function (require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl');
 
@@ -8,7 +8,10 @@
     var Dialog=sl.View.extend({
         events: {
             'tap .js_hide': 'cancel',
-            'tap .js_ok': 'ok'
+            'tap .js_ok': 'ok',
+            'touchmove': function (e) {
+                e.preventDefault();
+            }
         },
         template: template,
         options: {
@@ -18,22 +21,22 @@
             okText: '确定'
         },
 
-        title: function(title) {
+        title: function (title) {
             this.$title.html(title);
         },
 
-        init: function() {
+        init: function () {
             var that=this;
 
             that.$title=that.$('.dialog-title h3');
         },
 
-        hide: function() {
+        hide: function () {
             this.$el.hide();
             mask.hide();
         },
 
-        show: function() {
+        show: function () {
 
             if(!mask) {
                 mask=$('<div class="winheight" style="position:fixed;top:0px;bottom:0px;right:0px;width:100%;background: #888;opacity: 0.5;z-index:2000;display:none"></div>').appendTo('body');
@@ -47,12 +50,12 @@
                 });
         },
 
-        ok: function() {
+        ok: function () {
             this.options.onOk&&this.options.onOk.call(this);
             this.hide();
         },
 
-        cancel: function() {
+        cancel: function () {
             this.options.onCancel&&this.options.onCancel.call(this);
             this.hide();
         }
@@ -60,7 +63,7 @@
 
     var _prompt=null;
 
-    sl.prompt=function(title,callback,type) {
+    sl.prompt=function (title,callback,type) {
         if(!callback) {
             callback=title;
             title="请输入";
@@ -76,20 +79,24 @@
         }
         _prompt.$('input.prompt-text').val('').hide().filter('[type="'+(type||'text')+'"]').show();
 
-        _prompt.options.onOk=function() {
+        _prompt.options.onOk=function () {
             callback.call(this,this.$('input[type="'+(type||'text')+'"].prompt-text').val());
         }
 
-        _prompt.options.onCancel=function() {
+        _prompt.options.onCancel=function () {
             callback.call(this,'');
         }
 
         _prompt.show();
+
+        $(window).one('hashchange',function () {
+            _prompt.hide();
+        });
     };
 
     var _confirm=null;
 
-    sl.confirm=function(title,text,ok,cancel) {
+    sl.confirm=function (title,text,ok,cancel) {
         var options={};
         if($.isPlainObject(title)) {
             cancel=ok;
@@ -116,15 +123,19 @@
             options.okText&&_confirm.$('.js_ok').html(options.okText);
         }
 
-        _confirm.options.onOk=function() {
+        _confirm.options.onOk=function () {
             ok.call(this);
         }
 
-        _confirm.options.onCancel=function() {
+        _confirm.options.onCancel=function () {
             cancel&&cancel.call(this);
         }
 
         _confirm.show();
+
+        $(window).one('hashchange',function () {
+            _confirm.hide();
+        });
     };
 
     module.exports=Dialog;

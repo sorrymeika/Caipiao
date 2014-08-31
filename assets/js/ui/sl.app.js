@@ -9,7 +9,7 @@
     sl.Application=sl.Application.extend({
         viewPath: 'views/',
         startURL: location.hash.replace('#',''),
-        startPath: location.hash.replace('#','')
+        startPath: ''
     });
 
     var records={};

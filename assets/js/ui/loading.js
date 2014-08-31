@@ -1,4 +1,4 @@
-﻿define('ui/loading',['$','ui/sl','app'],function(require,exports,module) {
+﻿define('ui/loading',['$','ui/sl','app'],function (require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app');
@@ -10,13 +10,13 @@
             check: null
         },
 
-        check: function(res) {
+        check: function (res) {
             console.log('check');
             var flag=!!(res&&res.success);
             return flag;
         },
 
-        hasData: function(res) {
+        hasData: function (res) {
             return res.data&&res.data.length;
         },
 
@@ -24,7 +24,7 @@
 
         dataKeys: ['page','pageSize','total',''],
 
-        init: function() {
+        init: function () {
             var that=this;
 
             that.options.check&&(that.check=that.options.check);
@@ -41,7 +41,7 @@
             that.dataKey_pageNum=that.dataKeys[3];
         },
 
-        reload: function(options) {
+        reload: function (options) {
             var that=this;
 
             if(that.loading) return;
@@ -56,13 +56,13 @@
             that._load();
         },
 
-        load: function(options) {
+        load: function (options) {
             var that=this;
 
             if(that.loading) return;
             that.loading=true;
 
-            if(that.isLoad) return;
+            //if(that.isLoad) return;
 
             that.loadingOpt=options=$.extend({
                 url: '',
@@ -71,6 +71,7 @@
                 }:null,
                 type: 'GET',
                 data: null,
+                timeout: 15,
                 success: null,
                 refresh: null
 
@@ -79,15 +80,17 @@
             that._load();
         },
 
-        abort: function() {
+        abort: function () {
             if(this._xhr) {
+                this.loading=false;
+                this.isLoad=false;
                 this._xhr.abort();
                 this._xhr=null;
                 this.hide();
             }
         },
 
-        msg: function(msg) {
+        msg: function (msg) {
             var that=this,
                 page=!that.loadingOpt.data?1:that.loadingOpt.data[that.key_page];
 
@@ -98,15 +101,15 @@
             }
         },
 
-        show: function() {
+        show: function () {
             this._exec();
         },
 
-        hide: function() {
+        hide: function () {
             this._exec('hide');
         },
 
-        _load: function() {
+        _load: function () {
             var that=this,
                 options=that.loadingOpt,
                 defaults={};
@@ -124,18 +127,18 @@
             that._exec();
 
             that._ajax({
-                success: function(res) {
+                success: function (res) {
                     that.isLoad=true;
                     options.success&&options.success(res);
                     that._exec('hide');
                 },
-                error: options.error&&options.error||function(res) {
+                error: options.error&&options.error||function (res) {
                     that._exec(res&&res.msg||'网络错误');
                 }
             });
         },
 
-        _exec: function(msg) {
+        _exec: function (msg) {
             var that=this,
                 position=that.$el.css('position');
 
@@ -160,7 +163,7 @@
             }
         },
 
-        _ajax: function(opt) {
+        _ajax: function (opt) {
             var that=this,
                 loadingOpt=that.loadingOpt;
 
@@ -177,7 +180,7 @@
             var success=opt.success,
                 error=opt.error;
 
-            opt.success=function(res) {
+            opt.success=function (res) {
                 that._xhr=null;
                 if(that.check(res)) {
 
@@ -196,7 +199,7 @@
                 that.loading=false;
             };
 
-            opt.error=function(xhr) {
+            opt.error=function (xhr) {
                 that._xhr=null;
                 error.call(that,xhr);
                 that.loading=false;
@@ -205,7 +208,7 @@
             that._xhr=$.ajax(opt);
         },
 
-        _refresh: function() {
+        _refresh: function () {
             if(this.loading) return;
             this.loading=true;
 
@@ -217,18 +220,18 @@
             refreshing.html('正在载入...');
 
             that._ajax({
-                success: function(res) {
+                success: function (res) {
                     loadingOpt.refresh.call(that,res);
 
                     that.$refreshing.remove();
                 },
-                error: loadingOpt.refreshError&&loadingOpt.refreshError||function(res) {
+                error: loadingOpt.refreshError&&loadingOpt.refreshError||function (res) {
                     that.$refreshing.one('tap',$.proxy(that._refresh,that)).html(res&&res.msg||'网络错误，点击重试');
                 }
             });
         },
 
-        _dataNotFound: function(e,res) {
+        _dataNotFound: function (e,res) {
             var that=this,
                 page=!that.loadingOpt.data?1:that.loadingOpt.data[that.key_page];
 
@@ -237,13 +240,13 @@
             } else {
                 var refreshing=that.$refreshing;
                 refreshing.html('暂无数据');
-                setTimeout(function() {
+                setTimeout(function () {
                     refreshing.animate({ height: 0 },300,'ease-out');
                 },3000);
             }
         },
 
-        _scroll: function() {
+        _scroll: function () {
             var that=this;
 
             if(!that.loading
@@ -257,7 +260,7 @@
 
         _autoRefreshingEnabled: false,
 
-        checkAutoRefreshing: function(res) {
+        checkAutoRefreshing: function (res) {
             var that=this,
                 data=that.loadingOpt.data;
 
@@ -274,7 +277,7 @@
             }
         },
 
-        enableAutoRefreshing: function() {
+        enableAutoRefreshing: function () {
             if(this._autoRefreshingEnabled) return;
             this._autoRefreshingEnabled=true;
 
@@ -284,7 +287,7 @@
             this._scrollY=window.scrollY;
         },
 
-        disableAutoRefreshing: function() {
+        disableAutoRefreshing: function () {
             if(!this._autoRefreshingEnabled) return;
             this._autoRefreshingEnabled=false;
 

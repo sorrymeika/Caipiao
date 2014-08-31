@@ -12,7 +12,7 @@
                 sl.loading('hide');
             });
         },
-        startURL: location.hash.replace('#','')||location.pathname+location.search,
+        startURL: location.hash.replace('#','')||location.pathname+location.search||'/',
         startPath: location.pathname+location.search
     });
 

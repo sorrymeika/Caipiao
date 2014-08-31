@@ -20,6 +20,6 @@
 <script id="listItem" type="text/template">
     {%each(i,item) data%}
     <li data-id="${item.OrderID}"><p class="info"><i class="r_info${item.Win_Money>0?" red":""}">${item.Win_Money>0?"奖金"+item.Win_Money+"元":item.OrderStateCode=="00000"?"出票成功":item.OrderStateCode=="0"?"未提交":item.OrderStateCode=="1"?"已提交":item.OrderStateCode=="2"?"已注销":"未中奖"}</i><b>${item.GameID=="10001"?"双色球":item.GameID=="10003"?"七乐彩":item.GameID=="10002"?"3D":item.GameID=="35004"?"快三":item.GameID=="90015"?"15选5":item.GameID=="90016"?"福彩6+1":"其他"} ${item.WagerIssue}</b></p>
-    <p class="info">{%if (item.Win_Money>0)%}<em class="r_info">已中奖</em>{%/if%}<em>${item.INTIME.replace("T"," ")} 支付${item.Amount}元</em></p></li>
+    <p class="info">{%if (item.Win_Money>0)%}<em class="r_info">已中奖</em>{%/if%}<em>${item.INTIME.replace("T"," ")} 支付${item.Amount/100}元</em></p></li>
     {%/each%}
 </script>
