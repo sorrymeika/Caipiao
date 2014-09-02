@@ -8,7 +8,7 @@
 
     module.exports=Selector.extend({
         title: '快3选号',
-        GameID: '35004',
+        GameID: '32003',
         BetDataKey: 'k3BetData',
         buyUrl: '/k3Buy.html',
         tabs: [{

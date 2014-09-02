@@ -25,7 +25,7 @@
 <script id="list" type="text/template">
 {%if (data)%}
 {%each(i,item) data%}
-<li data-num="${item.num}"><span>&nbsp;${item.num}注 ${item.typeName}</span><br><i class="ssqNums red_num">${item.red}</i><span class="blue_num">${item.blue}</span><em class="ico-delete J_Delete"></em></li>
+<li data-num="${item.num}"><span>&nbsp;${item.num}注 ${item.typeName}</span><br><i class="ssqNums red_num">{%html item.red%}</i><span class="blue_num">{%html item.blue%}</span><em class="ico-delete J_Delete"></em></li>
 {%/each%}
 {%else%}
     <div style="padding:10px;text-align:center;">暂未投注</div>

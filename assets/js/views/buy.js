@@ -282,7 +282,7 @@
                     },
                     replaceCode=function (codes) {
                         return codes.replace(/\d{2}/g,function (r) {
-                            return r+"&nbsp;&nbsp;"
+                            return '<em>'+r+"</em>"
                         }).replace(/&nbsp;&nbsp;$/,'')
                     };
 
