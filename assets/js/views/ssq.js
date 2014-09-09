@@ -1,4 +1,4 @@
-﻿define('views/ssq',['zepto','ui/sl','app','views/loading','views/selector','util'],function(require,exports,module) {
+﻿define('views/ssq',['zepto','ui/sl','app','views/loading','views/selector','util'],function (require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
@@ -46,7 +46,7 @@
             types: [{
                 type: '00|03',
                 condition: '$0>=1&&$0<=5&&($0+$1>=7)&&$2>=1',
-                codes: '$0$codes0$1$codes1'
+                codes: '$0$codes0$1$codes1$2$codes2'
             }],
             balls: [{
                 color: 'red',
@@ -62,8 +62,8 @@
                 range: [1,33]
             },{
                 color: 'blue',
-                title: '拖码-蓝球',
-                msg: '请选择1个蓝球',
+                title: '蓝球',
+                msg: '请至少选择1个蓝球',
                 randomFlag: false,
                 range: [1,16]
             }]

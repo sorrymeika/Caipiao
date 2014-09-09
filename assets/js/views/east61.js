@@ -1,4 +1,4 @@
-﻿define('views/east61',['zepto','ui/sl','app','views/loading','views/selector','util'],function(require,exports,module) {
+﻿define('views/east61',['zepto','ui/sl','app','views/loading','views/selector','util'],function (require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
@@ -28,42 +28,42 @@
             balls: [{
                 color: 'red',
                 title: '第一位',
-                msg: '至少选择1个红球',
-                randomFlag: true,
-                randomNum: 1,
-                range: [0,9]
-            },{
-                color: 'red',
-                title: '第一位',
-                msg: '至少选择1个红球',
+                msg: '至少选择1个',
                 randomFlag: true,
                 randomNum: 1,
                 range: [0,9]
             },{
                 color: 'red',
                 title: '第二位',
-                msg: '至少选择1个红球',
+                msg: '至少选择1个',
                 randomFlag: true,
                 randomNum: 1,
                 range: [0,9]
             },{
                 color: 'red',
                 title: '第三位',
-                msg: '至少选择1个红球',
+                msg: '至少选择1个',
+                randomFlag: true,
+                randomNum: 1,
+                range: [0,9]
+            },{
+                color: 'red',
+                title: '第四位',
+                msg: '至少选择1个',
                 randomFlag: true,
                 randomNum: 1,
                 range: [0,9]
             },{
                 color: 'red',
                 title: '第五位',
-                msg: '至少选择1个红球',
+                msg: '至少选择1个',
                 randomFlag: true,
                 randomNum: 1,
                 range: [0,9]
             },{
                 color: 'red',
                 title: '第六位',
-                msg: '至少选择1个红球',
+                msg: '至少选择1个',
                 randomFlag: true,
                 randomNum: 1,
                 range: [0,9]

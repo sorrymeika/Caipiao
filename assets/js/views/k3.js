@@ -1,4 +1,4 @@
-﻿define('views/k3',['zepto','ui/sl','app','views/loading','views/selector','util'],function(require,exports,module) {
+﻿define('views/k3',['zepto','ui/sl','app','views/loading','views/selector','util'],function (require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
@@ -26,11 +26,11 @@
             }],
             balls: [{
                 color: 'red',
-                title: '一号',
+                title: '和值',
                 msg: '至少选择1个',
                 randomFlag: true,
                 randomNum: 1,
-                range: [3,18]
+                range: [4,17]
             }]
         },{
             name: '三同号单选',

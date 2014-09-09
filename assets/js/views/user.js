@@ -28,11 +28,11 @@
                     tmpl: 'account'
                 },{
                     title: '投注记录',
-                    url: '/api/CPService/QueryOrderRecords/?ct=json&gameid=&wagerissue=&begintime=&endtime=&pageindex=1&pagelen=10&winflag=',
+                    url: '/api/CPService/QueryOrderRecords/?ct=json&gameid=&wagerissue=&begintime=&endtime=&winflag=',
                     tmpl: 'record'
                 },{
                     title: '中奖记录',
-                    url: '/api/CPService/QueryOrderRecords/?ct=json&gameid=&wagerissue=&begintime=&endtime=&pageindex=1&pagelen=10&winflag=true',
+                    url: '/api/CPService/QueryOrderRecords/?ct=json&gameid=&wagerissue=&begintime=&endtime=&winflag=true',
                     tmpl: 'win'
                 }],
                 onChange: function (e,content,data) {
@@ -65,6 +65,11 @@
                             //content.html(that.tmpl(data.tmpl,data.data));
                         },
                         refresh: function (res) {
+                            if(data.tmpl!='account') {
+                                $.each(res.data,function (i,item) {
+                                    that.orders['order_'+item.OrderID]=item;
+                                });
+                            }
                             content.append(that.tmpl(data.tmpl,res));
                         }
                     })

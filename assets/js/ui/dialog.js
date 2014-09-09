@@ -51,8 +51,7 @@
         },
 
         ok: function () {
-            this.options.onOk&&this.options.onOk.call(this);
-            this.hide();
+            this.options.onOk&&(this.options.onOk.call(this)===false)||this.hide();
         },
 
         cancel: function () {
@@ -80,11 +79,11 @@
         _prompt.$('input.prompt-text').val('').hide().filter('[type="'+(type||'text')+'"]').show();
 
         _prompt.options.onOk=function () {
-            callback.call(this,this.$('input[type="'+(type||'text')+'"].prompt-text').val());
+            return callback.call(this,this.$('input[type="'+(type||'text')+'"].prompt-text').val());
         }
 
         _prompt.options.onCancel=function () {
-            callback.call(this,'');
+            callback.call(this);
         }
 
         _prompt.show();
@@ -119,8 +118,8 @@
             _confirm.title(options.title);
             _confirm.$('.dialog-content').html(options.content);
 
-            options.cancelText&&_confirm.$('.js_hide').html(options.cancelText);
-            options.okText&&_confirm.$('.js_ok').html(options.okText);
+            _confirm.$('.js_hide').html(options.cancelText||'取消');
+            _confirm.$('.js_ok').html(options.okText||'确定');
         }
 
         _confirm.options.onOk=function () {

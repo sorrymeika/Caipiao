@@ -1,4 +1,4 @@
-﻿define('views/qlc',['zepto','ui/sl','app','views/loading','views/selector','util'],function(require,exports,module) {
+﻿define('views/qlc',['zepto','ui/sl','app','views/loading','views/selector','util'],function (require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
@@ -26,8 +26,8 @@
             }],
             balls: [{
                 color: 'red',
-                title: '红球',
-                msg: '至少选择7个',
+                title: '号码',
+                msg: '请至少选择7个号码',
                 randomFlag: true,
                 randomNum: 7,
                 range: [1,30]
@@ -43,13 +43,13 @@
             }],
             balls: [{
                 color: 'red',
-                title: '胆码-红球',
+                title: '胆码',
                 msg: '至少选择1个，最多选择6个',
                 randomFlag: false,
                 range: [1,30]
             },{
                 color: 'red',
-                title: '拖码-红球',
+                title: '拖码',
                 msg: '至少选择2个',
                 randomFlag: false,
                 range: [1,30]

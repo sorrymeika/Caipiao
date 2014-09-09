@@ -40,6 +40,11 @@
                 $pools=$('.js_ball_pool',opt.$el),
                 pools=[];
 
+            if(that.isOver) {
+                sl.tip("本期销售已截止！");
+                return;
+            }
+
             if(localStorage[that.BetDataKey]&&$pools.find('em.curr').length==0) {
                 that._nextStep();
                 return;
@@ -47,13 +52,13 @@
 
             $.each(opt.balls,function (i) {
                 var selected=$pools.eq(i).find('em.curr'),
-                    betData='';
+                    betData=[];
 
                 selected.each(function () {
-                    betData+=util.pad($(this).attr('data-code'),2);
+                    betData.push(util.pad($(this).attr('data-code'),2));
                 });
 
-                pools.push([selected.length,betData]);
+                pools.push([selected.length,betData.join('')]);
             });
 
             var flag=true,
@@ -105,7 +110,14 @@
                 return '';
             });
 
-            console.log(pools,betCodes);
+            if(type.sort) {
+                var arr=[];
+                betCodes.replace(/\d{2}/g,function (r1) {
+                    arr.push(r1);
+                });
+                arr.sort();
+                betCodes=arr.join('');
+            }
 
             betCodes=type.type+'|0001|'+betCodes;
 
@@ -116,16 +128,22 @@
                         that._nextStep();
                     });
                 } else {
-                    if(localStorage[that.BetDataKey])
+                    if(localStorage[that.BetDataKey]) {
+
+                        if(localStorage[that.BetDataKey].split('#').length>=5) {
+                            sl.tip("一个订单单式最多只能5注！");
+                            return;
+                        }
+
                         localStorage[that.BetDataKey]+='#'+betCodes;
-                    else
+                    } else
                         localStorage[that.BetDataKey]=betCodes;
 
                     that._nextStep();
                 }
 
             } else {
-                if(localStorage[that.BetDataKey]) {
+                if(localStorage[that.BetDataKey]&&localStorage[that.BetDataKey].indexOf(type.type)!=0) {
                     sl.confirm('一笔订单只能包含一种模式注码，是否清除之前注码？',function () {
                         localStorage[that.BetDataKey]=betCodes;
                         that._nextStep();
@@ -238,7 +256,7 @@
                         leftTime=(endTime-new Date())/1000;
 
                     if(leftTime<0) {
-                        that.$('.js_leftTime').html("投注已结束");
+                        that.$('.js_leftTime').html("销售已截止！");
                         that.isOver=true;
 
                     } else {
@@ -248,7 +266,7 @@
                             leftTime--;
                             if(leftTime<=0) {
                                 that.isOver=true;
-                                that.$('.js_leftTime').html("投注已结束");
+                                that.$('.js_leftTime').html("销售已截止！");
                                 clearInterval(that.interval);
                                 that.interval=null;
                             } else
@@ -290,6 +308,45 @@
                 this.$('.js_no_repeat [data-red="'+$target.attr('data-red')+'"].curr').removeClass('curr');
             }
             $target.toggleClass('curr');
+
+            var opt=this.currentType,
+                $pools=$('.js_ball_pool',opt.$el),
+                pools=[];
+
+            $.each(opt.balls,function (i) {
+                var selected=$pools.eq(i).find('em.curr'),
+                    betData='';
+
+                selected.each(function () {
+                    betData+=util.pad($(this).attr('data-code'),2);
+                });
+
+                pools.push([selected.length,betData]);
+            });
+
+            var flag=true,
+                type,
+                msg;
+
+            if(opt.errors) {
+                $.each(opt.errors,function (i,errorOpt) {
+                    var condition=errorOpt[0].replace(/\$(\d+)/g,function (r0,r1) {
+                        return pools[parseInt(r1)][0];
+                    });
+
+                    if(eval(condition)) {
+                        flag=false;
+                        msg=errorOpt[1];
+                        return false;
+                    }
+                });
+
+                if(!flag) {
+                    sl.tip(msg);
+                    $target.toggleClass('curr');
+                    return;
+                }
+            }
 
             if($target.closest('.redBallList').hasClass('js_single')) {
                 $target.closest('p').siblings('p').find('em.curr').removeClass('curr');

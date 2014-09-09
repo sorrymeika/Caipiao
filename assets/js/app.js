@@ -122,8 +122,9 @@
         share: function () {
             appFunc('share');
         },
+        isDevelopment: navigator.platform=="Win32"||navigator.platform=="Win64",
         url: function (url) {
-            return /^http\:\/\//.test(url)?url:navigator.platform=="Win32"||navigator.platform=="Win64"?'/assets/Index.cshtml?path='+encodeURIComponent(url):('http://ms1.962666.cn'+url);
+            return /^http\:\/\//.test(url)?url:navigator.platform=="Win32"||navigator.platform=="Win64"?'/assets/Index.cshtml?path='+encodeURIComponent(url):('http://115.29.141.126:8180'+url);
         },
         post: function () {
             var args=slice.call(arguments),

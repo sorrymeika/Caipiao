@@ -37,12 +37,15 @@
                         data: data,
                         onChange: function (e,content,item) {
 
-                            console.log(item)
-
-                            content.loading('load',{
-                                url: '/api/CPService/queryCpNewsList/?ct=json&r=0.6135462955571711&newsclasses=&newstype='+item.id+'&currentindex=1&len=10',
+                            content.loading({
+                                keys: ['currentindex','pagelen']
+                            }).loading('load',{
+                                url: '/api/CPService/queryCpNewsList/?ct=json&r=0.6135462955571711&newsclasses=&newstype='+item.id+'&len=10',
                                 success: function (res) {
                                     content.html(that.tmpl('list',res));
+                                },
+                                refresh: function (res) {
+                                    content.append(that.tmpl('list',res));
                                 }
                             });
                         }

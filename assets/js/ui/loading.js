@@ -188,6 +188,7 @@
                         res._params=loadingOpt.data;
                         success.call(that,res);
 
+                        that.loading=false;
                         that.checkAutoRefreshing(res);
 
                     } else {
@@ -264,8 +265,6 @@
             var that=this,
                 data=that.loadingOpt.data;
 
-            console.log(that.dataKey_pageNum,res[that.dataKey_pageNum])
-
             if((that.loadingOpt.refresh&&that.dataKey_pageNum&&res[that.dataKey_pageNum]&&res[that.dataKey_pageNum]>data[that.key_page])||(that.dataKey_total&&res[that.dataKey_total]&&res[that.dataKey_total]>data[that.key_page]*data[that.key_pageSize])) {
 
                 that.enableAutoRefreshing();
@@ -285,6 +284,10 @@
             this.bind('Destory',this.disableAutoRefreshing);
 
             this._scrollY=window.scrollY;
+
+            if(window.innerHeight==document.body.scrollHeight) {
+                this._refresh();
+            }
         },
 
         disableAutoRefreshing: function () {
@@ -294,7 +297,7 @@
             $(window).off('scroll',this._scroll);
 
             this.unbind('Destory',this.disableAutoRefreshing);
-            that.$refreshing&&that.$refreshing.remove();
+            this.$refreshing&&this.$refreshing.remove();
         }
     });
 

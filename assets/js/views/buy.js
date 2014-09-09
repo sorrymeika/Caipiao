@@ -1,8 +1,9 @@
-﻿define('views/buy',['zepto','ui/sl','util','app','views/loading'],function (require,exports,module) {
+﻿define('views/buy',['zepto','ui/sl','util','app','views/loading','views/allTypes'],function (require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
         util=require('util'),
+        types=require('views/allTypes'),
         Loading=require('views/loading');
 
     module.exports=sl.Activity.extend({
@@ -10,6 +11,7 @@
         title: '双色球投注',
         GameID: '10001',
         BetDataKey: 'ssqBetData',
+        maxTimes: 9999,
         events: {
             'tap .J_Back': 'back',
             'tap .J_Delete': 'del',
@@ -26,18 +28,17 @@
                 if(times=='') return;
 
                 if(!/^\d+$/.test(times)) {
-                    sl.tip('请输入正确的倍数');
                     $times.val(this.times);
                     return;
                 }
 
                 times=parseInt(times);
                 if(times==0) {
-                    sl.tip('请输入正确的倍数');
+                    sl.tip('最小输入1');
                     $times.val(this.times);
                     return;
-                } else if(times>9999) {
-                    sl.tip('输入的倍数过大');
+                } else if(times>this.maxTimes) {
+                    sl.tip('最大输入'+this.maxTimes);
                     $times.val(this.times);
                     return;
                 }
@@ -52,18 +53,17 @@
                 if(number=='') return;
 
                 if(!/^\d+$/.test(number)) {
-                    sl.tip('请输入正确的期数');
                     $number.val(this.number);
                     return;
                 }
 
                 number=parseInt(number);
                 if(number==0) {
-                    sl.tip('请输入正确的期数');
+                    sl.tip('最小输入1');
                     $number.val(this.number);
                     return;
-                } else if(number>9999) {
-                    sl.tip('输入的倍数过大');
+                } else if(number>365) {
+                    sl.tip('最大输入365');
                     $number.val(this.number);
                     return;
                 }
@@ -86,13 +86,20 @@
             }
 
             sl.prompt('请输入您的投注密码',function (res) {
+                if(typeof res==='undefined') return;
+
+                var sl_prompt=this;
+
+                res=$.trim(res);
+
                 if(!res) {
-                    return;
+                    sl.tip('请输入投注密码！');
+                    return false;
                 }
 
                 if(!/^\d{6}$/.test(res)) {
-                    sl.tip('请输入正确的密码');
-                    return;
+                    sl.tip('您的投注密码输入有误，请重新输入！');
+                    return false;
                 }
 
                 var betData=localStorage[that.BetDataKey].split('#'),
@@ -111,7 +118,7 @@
                     NumIssue: that.number,
                     RelationOrderID: '',
                     Sequence: '',
-                    Amount: that.number*that.times*that.total*2*100,
+                    Amount: that.times*that.total*2*100,
                     DrawWay: 1,
                     BetData: resultCode.join('#'),
                     BetPassword: res,
@@ -124,27 +131,45 @@
                     type: 'POST',
                     data: data,
                     success: function (res) {
+                        sl_prompt.hide();
+
                         sl.tip('投注成功！');
+                        that.clear();
                     },
                     error: function (res) {
                         if(res.ReturnCode=='90026') {
+                            sl_prompt.hide();
 
                             data.OrderID=res.OrderID;
 
-                            sl.prompt('请输入您的短信验证码',function (res) {
+                            sl.prompt('请输入您的短信验证码',function (validCode) {
+                                if(typeof validCode==='undefined') return;
 
-                                data.BetCode=res;
+                                validCode=$.trim(validCode);
+                                if(!validCode) {
+                                    sl.tip('请输入短信验证码！');
+                                    return false;
+                                }
+
+                                var vc_prompt=this;
+
+                                data.BetCode=validCode;
 
                                 $('body').loading('load',{
                                     url: '/api/CPService/Betting/?ct=json',
                                     type: 'POST',
                                     data: data,
                                     success: function (res) {
-                                        console.log(res)
+                                        vc_prompt.hide();
+
                                         sl.tip('投注成功！');
+
+                                        that.clear();
                                     },
                                     error: function (res) {
-                                        if(res.ReturnCode) {
+                                        if(res.ReturnCode=='90023') {
+                                            sl.tip('您的短信验证码输入有误，请重新输入！');
+                                        } else if(res.ReturnCode) {
                                             sl.tip('错误:'+res.ReturnCode);
                                         } else {
                                             sl.tip('网络错误');
@@ -153,6 +178,7 @@
                                     }
                                 });
 
+                                return false;
                             });
 
                         } else if(res.ReturnCode) {
@@ -160,9 +186,12 @@
                         } else {
                             sl.tip('网络错误');
                         }
+
                         this.hide();
                     }
                 });
+
+                return false;
 
             },'password');
 
@@ -173,8 +202,10 @@
         clear: function () {
             this.$('.J_List li').remove();
             this.total=0;
-            localStorage[that.BetDataKey]="";
+            localStorage.removeItem(this.BetDataKey);
             this._setInfo();
+
+            this.to(this.backUrl);
         },
         _setInfo: function (total) {
             var that=this,
@@ -186,7 +217,7 @@
             text=text.replace(/\d+期/,that.number+'期');
 
             $total.html(text);
-            $money.html('共'+that.times*that.number*that.total*2+'元');
+            $money.html('共'+that.times*that.total*2+'元');
         },
         del: function (e) {
             var that=this,
@@ -196,12 +227,16 @@
 
             data.splice($parent.index(),1);
 
-            localStorage[that.BetDataKey]=data.join('#');
+            if(data.length==0) {
+                that.clear();
+            } else {
+                localStorage[that.BetDataKey]=data.join('#');
 
-            that.total-=parseInt($parent.attr('data-num'));
+                that.total-=parseInt($parent.attr('data-num'));
 
-            $parent.remove();
-            that._setInfo();
+                $parent.remove();
+                that._setInfo();
+            }
         },
 
         _loadData: function () {
@@ -254,6 +289,8 @@
                 data,
                 total=0;
 
+            that.types=types['t_'+that.GameID];
+
             that.$('.J_Header').html(that.title);
 
             if(!localStorage[that.BetDataKey]) {
@@ -267,6 +304,7 @@
                 $.each(sBetData,function (i,item) {
                     betData=item.split('|');
 
+
                     $.each(that.types,function (j,typeOpt) {
                         if(item.indexOf(typeOpt.type)==0) {
                             opt=typeOpt;
@@ -275,6 +313,8 @@
                     });
 
                     if(!opt) return;
+
+                    if(opt.maxTimes) this.maxTimes=opt.maxTimes;
 
                     var itemData={
                         type: betData[1],
@@ -288,7 +328,6 @@
 
                     var codes=betData[3],
                         pools=[];
-
 
                     if(opt.balls=='$') {
                         var num;
@@ -321,7 +360,8 @@
                     });
 
                     itemData.blue=opt.blue&&opt.blue.replace(/\$(\d+)/g,function (r0,r1) {
-                        return replaceCode(pools[parseInt(r1)][1]);
+                        var code=pools[parseInt(r1)][1];
+                        return replaceCode(opt.blueTextArray?'<em>'+opt.blueTextArray[code]+'</em>':code);
                     });
 
                     total+=itemData.num;

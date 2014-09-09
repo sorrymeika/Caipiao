@@ -1,4 +1,4 @@
-﻿define('views/3d',['zepto','ui/sl','app','views/loading','views/selector','util'],function(require,exports,module) {
+﻿define('views/3d',['zepto','ui/sl','app','views/loading','views/selector','util'],function (require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
@@ -54,19 +54,20 @@
             types: [{
                 type: '02|01',
                 condition: '$0==1&&$1==1',
+                sort: true,
                 codes: '$codes0$codes1$codes0'
             }],
             balls: [{
                 color: 'red',
                 title: '重号',
-                msg: '至少选择1个',
+                msg: '请选择1个号码',
                 randomFlag: false,
                 single: true,
                 range: [0,9]
             },{
                 color: 'red',
                 title: '单号',
-                msg: '至少选择1个',
+                msg: '请选择1个号码',
                 single: true,
                 randomFlag: false,
                 range: [0,9]

@@ -19,9 +19,16 @@
             }
         });
 
-        //localStorage.ssqBetData=null;
-
         seajs.use(['zepto','ui/sl.app','app','ui/dialog'],function ($,sl,_app) {
+            if(!_app.isDevelopment) {
+                localStorage.removeItem('ssqBetData');
+                localStorage.removeItem('threedDBetData');
+                localStorage.removeItem('east61BetData');
+                localStorage.removeItem('f15c5BetData');
+                localStorage.removeItem('k3BetData');
+                localStorage.removeItem('qlcBetData');
+            }
+
             sl.Route.config({
                 '': 'index',
                 'menu/{name:\\w+}.html': 'menu',
