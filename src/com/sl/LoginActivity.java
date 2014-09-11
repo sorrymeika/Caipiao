@@ -83,7 +83,7 @@ public class LoginActivity extends Activity {
 
 				if ("https://219.143.230.66:9443/CwlProWeb/index/index.action"
 						.equals(url)) {
-					webView.loadUrl("http://115.29.141.126:8180/acc/login");
+					webView.loadUrl("http://ms1.962666.com/acc/login");
 					return;
 				} else if (url.indexOf("/Acc/ExternalLoginCallback") != -1) {
 					IsLogining = true;
@@ -165,7 +165,7 @@ public class LoginActivity extends Activity {
 			}
 		});
 
-		webView.loadUrl("http://115.29.141.126:8180/acc/login");
+		webView.loadUrl("http://ms1.962666.com/acc/login");
 	}
 
 	@Override

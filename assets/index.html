@@ -19,7 +19,7 @@
             }
         });
 
-        seajs.use(['zepto','ui/sl.app','app','ui/dialog'],function ($,sl,_app) {
+        seajs.use(['zepto','ui/sl.app','app','ui/dialog'],function($,sl,_app) {
             if(!_app.isDevelopment) {
                 localStorage.removeItem('ssqBetData');
                 localStorage.removeItem('threedDBetData');
@@ -66,13 +66,9 @@
 
             sl.activedApp=app;
 
-            $(window).on('motion',function () {
-                app.to('/motion.html');
-            });
-
             if(_app.isAndroid)
-                setTimeout(function () {
-                    _app.load(function () {
+                setTimeout(function() {
+                    _app.load(function() {
                     });
                 },1500);
         });

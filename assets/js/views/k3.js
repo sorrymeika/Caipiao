@@ -1,4 +1,4 @@
-﻿define('views/k3',['zepto','ui/sl','app','views/loading','views/selector','util'],function (require,exports,module) {
+﻿define('views/k3',['zepto','ui/sl','app','views/loading','views/selector','util'],function(require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),

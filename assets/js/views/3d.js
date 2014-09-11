@@ -1,4 +1,4 @@
-﻿define('views/3d',['zepto','ui/sl','app','views/loading','views/selector','util'],function (require,exports,module) {
+﻿define('views/3d',['zepto','ui/sl','app','views/loading','views/selector','util'],function(require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
@@ -49,7 +49,6 @@
             }]
         },{
             name: '组三单式',
-            repeat: true,
             randomFlag: false,
             types: [{
                 type: '02|01',

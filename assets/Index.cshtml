@@ -11,7 +11,7 @@
     }
 
 
-    string url = "http://115.29.141.126:8180" + Request.QueryString["path"] + (Request.QueryString["path"].IndexOf('?') == -1 ? '?' : '&') + qs;
+    string url = "http://ms1.962666.cn" + Request.QueryString["path"] + (Request.QueryString["path"].IndexOf('?') == -1 ? '?' : '&') + qs;
 
     HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
@@ -20,8 +20,6 @@
     qs = "";
     if (Request.HttpMethod == "POST")
     {
-
-
         for (int i = 0; i < Request.Form.Count; i++)
         {
             if (Request.Form.GetKey(i) != "path")
@@ -38,8 +36,7 @@
         }
     }
 
-
-    request.Headers.Add("Cookie", ".ASPXCOOKIEWebApi=BFA1C969A9D946C4D6522ED5AC65BA825AFFFB6115BB31AA7400852A92AF4D45757560BA300D215815215B6CB89BF97DFC0E0685131EDE25A4D37CF945355FCA708059AB19FE118429D16327CB5BF8F75494905CDA440B0F27B800E4A173080D165CB6CD824738001FEE0993B35F12C06457529188C208E5");
+    request.Headers.Add("Cookie", ".ASPXCOOKIEWebApi=BB97B1E21B77873D160EE20719215F49205DFE3F06EF0660234F7CC47144871C0603E4560B8E0E071252691AD32976D481BE6EA3CDDA80D4217CE5C887D656CDDFA63C71D0A30A49E381CF378DAB4F0DBA985BFAA1F4B6B888FD1181D40405AD70F5094F172200A502C37BE77C6736C05E98838727C96A37");
 
     var response = request.GetResponse();
 

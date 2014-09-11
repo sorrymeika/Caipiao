@@ -1,7 +1,9 @@
-﻿define('ui/loading',['$','ui/sl','app'],function (require,exports,module) {
+﻿define('ui/loading',['$','ui/sl','app'],function(require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app');
+
+    var records=[];
 
     var Loading=sl.View.extend({
         events: {},
@@ -10,13 +12,13 @@
             check: null
         },
 
-        check: function (res) {
+        check: function(res) {
             console.log('check');
             var flag=!!(res&&res.success);
             return flag;
         },
 
-        hasData: function (res) {
+        hasData: function(res) {
             return res.data&&res.data.length;
         },
 
@@ -24,7 +26,7 @@
 
         dataKeys: ['page','pageSize','total',''],
 
-        init: function () {
+        init: function() {
             var that=this;
 
             that.options.check&&(that.check=that.options.check);
@@ -41,7 +43,7 @@
             that.dataKey_pageNum=that.dataKeys[3];
         },
 
-        reload: function (options) {
+        reload: function(options) {
             var that=this;
 
             if(that.loading) return;
@@ -56,7 +58,7 @@
             that._load();
         },
 
-        load: function (options) {
+        load: function(options) {
             var that=this;
 
             if(that.loading) return;
@@ -80,7 +82,7 @@
             that._load();
         },
 
-        abort: function () {
+        abort: function() {
             if(this._xhr) {
                 this.loading=false;
                 this.isLoad=false;
@@ -90,7 +92,7 @@
             }
         },
 
-        msg: function (msg) {
+        msg: function(msg) {
             var that=this,
                 page=!that.loadingOpt.data?1:that.loadingOpt.data[that.key_page];
 
@@ -101,18 +103,22 @@
             }
         },
 
-        show: function () {
+        show: function() {
             this._exec();
         },
 
-        hide: function () {
+        hide: function() {
             this._exec('hide');
         },
 
-        _load: function () {
+        _load: function() {
             var that=this,
                 options=that.loadingOpt,
                 defaults={};
+
+            for(var i=records.length-1;i>=0;i--) {
+                records[i].disableAutoRefreshing();
+            }
 
             defaults[that.key_page]=1;
             defaults[that.key_pageSize]=10;
@@ -127,18 +133,18 @@
             that._exec();
 
             that._ajax({
-                success: function (res) {
+                success: function(res) {
                     that.isLoad=true;
                     options.success&&options.success(res);
                     that._exec('hide');
                 },
-                error: options.error&&options.error||function (res) {
+                error: options.error&&options.error||function(res) {
                     that._exec(res&&res.msg||'网络错误');
                 }
             });
         },
 
-        _exec: function (msg) {
+        _exec: function(msg) {
             var that=this,
                 position=that.$el.css('position');
 
@@ -163,7 +169,7 @@
             }
         },
 
-        _ajax: function (opt) {
+        _ajax: function(opt) {
             var that=this,
                 loadingOpt=that.loadingOpt;
 
@@ -172,7 +178,7 @@
                 headers: loadingOpt.headers,
                 data: loadingOpt.data,
                 type: loadingOpt.type,
-                dataType: 'json'
+                dataType: loadingOpt.dataType||'json'
             },opt);
 
             that.abort();
@@ -180,11 +186,11 @@
             var success=opt.success,
                 error=opt.error;
 
-            opt.success=function (res) {
+            opt.success=function(res) {
                 that._xhr=null;
-                if(that.check(res)) {
+                if(that.loadingOpt.check===false||that.check(res)) {
 
-                    if(that.hasData(res)) {
+                    if(that.loadingOpt.checkData===false||that.hasData(res)) {
                         res._params=loadingOpt.data;
                         success.call(that,res);
 
@@ -200,7 +206,7 @@
                 that.loading=false;
             };
 
-            opt.error=function (xhr) {
+            opt.error=function(xhr) {
                 that._xhr=null;
                 error.call(that,xhr);
                 that.loading=false;
@@ -209,7 +215,7 @@
             that._xhr=$.ajax(opt);
         },
 
-        _refresh: function () {
+        _refresh: function() {
             if(this.loading) return;
             this.loading=true;
 
@@ -221,18 +227,18 @@
             refreshing.html('正在载入...');
 
             that._ajax({
-                success: function (res) {
+                success: function(res) {
                     loadingOpt.refresh.call(that,res);
 
                     that.$refreshing.remove();
                 },
-                error: loadingOpt.refreshError&&loadingOpt.refreshError||function (res) {
+                error: loadingOpt.refreshError&&loadingOpt.refreshError||function(res) {
                     that.$refreshing.one('tap',$.proxy(that._refresh,that)).html(res&&res.msg||'网络错误，点击重试');
                 }
             });
         },
 
-        _dataNotFound: function (e,res) {
+        _dataNotFound: function(e,res) {
             var that=this,
                 page=!that.loadingOpt.data?1:that.loadingOpt.data[that.key_page];
 
@@ -241,13 +247,13 @@
             } else {
                 var refreshing=that.$refreshing;
                 refreshing.html('暂无数据');
-                setTimeout(function () {
+                setTimeout(function() {
                     refreshing.animate({ height: 0 },300,'ease-out');
                 },3000);
             }
         },
 
-        _scroll: function () {
+        _scroll: function() {
             var that=this;
 
             if(!that.loading
@@ -261,24 +267,25 @@
 
         _autoRefreshingEnabled: false,
 
-        checkAutoRefreshing: function (res) {
+        checkAutoRefreshing: function(res) {
             var that=this,
                 data=that.loadingOpt.data;
 
             if((that.loadingOpt.refresh&&that.dataKey_pageNum&&res[that.dataKey_pageNum]&&res[that.dataKey_pageNum]>data[that.key_page])||(that.dataKey_total&&res[that.dataKey_total]&&res[that.dataKey_total]>data[that.key_page]*data[that.key_pageSize])) {
 
-                that.enableAutoRefreshing();
                 data[that.key_page]++;
+                that.enableAutoRefreshing();
 
             } else {
-                console.log("disableAutoRefreshing")
                 that.disableAutoRefreshing();
             }
         },
 
-        enableAutoRefreshing: function () {
+        enableAutoRefreshing: function() {
             if(this._autoRefreshingEnabled) return;
             this._autoRefreshingEnabled=true;
+
+            records.push(this);
 
             $(window).on('scroll',$.proxy(this._scroll,this));
             this.bind('Destory',this.disableAutoRefreshing);
@@ -290,9 +297,16 @@
             }
         },
 
-        disableAutoRefreshing: function () {
+        disableAutoRefreshing: function() {
             if(!this._autoRefreshingEnabled) return;
             this._autoRefreshingEnabled=false;
+
+            for(var i=records.length-1;i>=0;i--) {
+                if(records[i]==this) {
+                    records.splice(i,1);
+                    break;
+                }
+            }
 
             $(window).off('scroll',this._scroll);
 

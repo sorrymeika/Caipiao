@@ -1,15 +1,16 @@
-﻿define('views/allTypes',['zepto','util'],function (require,exports,module) {
+﻿define('views/allTypes',['zepto','util'],function(require,exports,module) {
     var $=require('zepto'),
         util=require('util');
 
     var texts='鼠 牛 虎 兔 龙 蛇 马 羊 猴 鸡 狗 猪'.split(' '),
         east61Texts={};
 
-    $.each(texts,function (i,text) {
+    $.each(texts,function(i,text) {
         east61Texts[util.pad(i+1)]=text;
     });
 
     var types={
+        //双色球
         t_10001: [{
             type: '00|01',
             name: '单式',
@@ -64,6 +65,7 @@
             balls: '$',
             red: '$0'
         }],
+        //福彩6+1
         t_90016: [{
             type: '00|01',
             name: '单式',
@@ -77,8 +79,8 @@
             name: '复式',
             total: '$0*$1*$2*$3*$4*$5*$6',
             balls: '$',
-            red: '$0$1$2$3$4$5',
-            blue: '$1',
+            red: '($0)($1)($2)($3)($4)($5)',
+            blue: '$6',
             blueTextArray: east61Texts
         }],
         t_10003: [{
@@ -92,8 +94,7 @@
             name: '复式',
             total: '$C($0,$0-7)',
             balls: '$',
-            red: '$0',
-            blue: '$1'
+            red: '$0'
         },{
             type: '00|03',
             name: '胆拖',
@@ -101,7 +102,8 @@
             balls: '$',
             red: '($0)$1'
         }],
-        t_35004: [{
+        //快3
+        t_32003: [{
             type: '01|01',
             name: '和值',
             total: '1',
@@ -112,8 +114,7 @@
             name: '复式和值',
             total: '$0',
             balls: '$',
-            red: '$0',
-            blue: '$1'
+            red: '$0'
         },{
             type: '03|01',
             name: '三同号单选',
@@ -139,6 +140,7 @@
             balls: '$3',
             red: '$0'
         }],
+        //15选5
         t_90015: [{
             type: '00|01',
             name: '单式',
@@ -151,8 +153,7 @@
             name: '复式',
             total: '$C($0,$0-5)',
             balls: '$',
-            red: '$0',
-            blue: '$1'
+            red: '$0'
         },{
             type: '00|03',
             name: '胆拖',

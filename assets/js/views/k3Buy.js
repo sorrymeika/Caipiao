@@ -7,7 +7,7 @@
         Buy=require('views/buy');
 
     module.exports=Buy.extend({
-        GameID: '35004',
+        GameID: '32003',
         title: '快3选号',
         BetDataKey: 'k3BetData',
         backUrl: '/k3.html'

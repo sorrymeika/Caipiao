@@ -1,4 +1,4 @@
-﻿define('views/order',['zepto','util','ui/sl','ui/tabs','app','views/loading','views/allTypes'],function (require,exports,module) {
+﻿define('views/order',['zepto','util','ui/sl','ui/tabs','app','views/loading','views/allTypes'],function(require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
@@ -12,39 +12,42 @@
         events: {
             'tap .J_Back': 'back'
         },
-        onCreate: function () {
+        onCreate: function() {
             var that=this,
-                orderInfo=common.orderInfo||localStorage.tmpOrderData,
+                orderInfo=common.orderInfo||JSON.parse(localStorage.tmpOrderData),
                 data=[],
                 betData,
                 opt,
                 typeOpts=types['t_'+orderInfo.GameID];
 
-            localStorage.tmpOrderData=orderInfo;
+            localStorage.tmpOrderData=JSON.stringify(orderInfo);
 
-            console.log(orderInfo);
-
-            $.each(orderInfo.BetData.split('#'),function (i,item) {
+            $.each(orderInfo.BetData.split('#'),function(i,item) {
                 betData=item.split('|');
 
-                $.each(typeOpts,function (j,typeOpt) {
+                $.each(typeOpts,function(j,typeOpt) {
                     if(item.indexOf(typeOpt.type)==0) {
                         opt=typeOpt;
                         return false;
                     }
                 });
 
-                if(!opt) return;
+                if(!opt) {
+                    data.push({
+                        typeName: '接口数据有误，不存在游戏代码'+item
+                    })
+                    return;
+                }
 
                 var itemData={
                     type: betData[1],
                     times: parseInt(betData[2]),
                     typeName: opt.name
                 },
-                replaceCode=function (codes) {
-                    return codes.replace(/\d{2}/g,function (r) {
-                        return r+"&nbsp;&nbsp;"
-                    });
+                replaceCode=function(codes,textArray) {
+                    return codes.replace(/\d{2}/g,function(r) {
+                        return textArray?'<em>'+textArray[r]+'</em>':'<em>'+r+"</em>";
+                    }).replace(/&nbsp;&nbsp;$/,'')
                 };
 
                 var codes=betData[3],
@@ -60,7 +63,7 @@
                     }
 
                 } else {
-                    opt.balls.replace(/\$(\d+)/g,function (r0,r1) {
+                    opt.balls.replace(/\$(\d+)/g,function(r0,r1) {
                         r1=parseInt(r1);
                         pools.push([r1,codes.substr(0,2*r1)]);
                         codes=codes.substr(2*r1);
@@ -68,19 +71,19 @@
                     });
                 }
 
-                var t=opt.total.replace(/\$(\d+)/g,function (r0,r1) {
+                var t=opt.total.replace(/\$(\d+)/g,function(r0,r1) {
                     try {
                         return pools[parseInt(r1)][0];
                     } catch(e) {
                         return '';
                     }
-                }).replace(/\$/g,function (r0,r1) {
+                }).replace(/\$/g,function(r0,r1) {
                     return 'util.';
                 });
 
                 itemData.num=eval(t);
 
-                itemData.red=opt.red.replace(/\$(\d+)/g,function (r0,r1) {
+                itemData.red=opt.red.replace(/\$(\d+)/g,function(r0,r1) {
                     try {
                         return replaceCode(pools[parseInt(r1)][1]);
                     } catch(e) {
@@ -88,12 +91,10 @@
                     }
                 });
 
-                itemData.blue=opt.blue&&opt.blue.replace(/\$(\d+)/g,function (r0,r1) {
-                    try {
-                        return replaceCode(pools[parseInt(r1)][1]);
-                    } catch(e) {
-                        return '';
-                    }
+                itemData.blue=opt.blue&&opt.blue.replace(/\$(\d+)/g,function(r0,r1) {
+                    var code=pools[parseInt(r1)][1];
+
+                    return replaceCode(code,opt.blueTextArray);
                 });
 
                 //total+=itemData.num;
@@ -107,20 +108,20 @@
 
             that.$el.loading('load',{
                 url: '/api/CPService/QueryLotteryAnnouncement/?ct=json&gameid='+orderInfo.GameID+'&wagerissue='+orderInfo.WagerIssue+'&qsnum=1',
-                success: function (res) {
+                success: function(res) {
                     console.log(res);
                 },
-                error: function () {
+                error: function() {
                     this.hide();
                 }
             });
 
         },
-        onStart: function () {
+        onStart: function() {
         },
-        onResume: function () {
+        onResume: function() {
         },
-        onDestory: function () {
+        onDestory: function() {
         }
     });
 });

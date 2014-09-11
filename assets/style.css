@@ -186,7 +186,7 @@ ul.table li > p { display: table-cell; text-align: center; padding-top: 5px; }
 .buyBar .buyInfo { border-top: 1px solid #a3a3a3; background: #161614; height: 47px; }
 
 .buyList { padding: 5px 10px; }
-.buyList > li { padding: 6px 8px; padding-right: 35px; line-height: 20px; font-size: 14px; background: #fff; border: 1px solid #afafaf; border-radius: 6px; margin-bottom: 5px; position: relative; word-wrap: break-word; }
+.buyList > li { padding: 6px 8px; padding-right: 35px; line-height: 20px; font-size: 14px; background: #fff; border: 1px solid #afafaf; border-radius: 6px; margin-bottom: 5px; position: relative; }
 .buyList > li > :first-child { border-right: 1px solid #ddd; padding-right: 6px; }
 .buyList > li .ssqNums { padding: 0 6px; margin-right: 6px; border-right: 1px solid #ddd; }
 .buyList > li .ico-delete { position: absolute; top: 50%; right: 5px; background: url(images/site.png) no-repeat -123px -272px; background-size: 320px auto; width: 24px; height: 24px; margin-top: -12px; }
