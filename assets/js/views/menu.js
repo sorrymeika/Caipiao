@@ -1,7 +1,8 @@
-﻿define('views/menu',['zepto','ui/sl','app'],function(require,exports,module) {
+﻿define('views/menu',['zepto','ui/sl','app','views/loading'],function(require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
-        app=require('app');
+        app=require('app'),
+        Loading=require('views/loading');
 
     module.exports=sl.Activity.extend({
         className: 'view transparent',
@@ -27,16 +28,32 @@
                 });
             },
             'tap .J_Signout': function(e) {
+                var that=this;
+
                 if(!localStorage.authCookies) {
-                    this.to('/login.html');
+                    that.to('/login.html');
                 } else {
-                    localStorage.authCookies='';
-                    localStorage.auth='';
-                    localStorage.UserName='';
+                    that.$('.J_Signout').css({ position: 'relative' }).loading('load',{
+                        url: '/api/AccService/Logout',
+                        check: false,
+                        checkData: false,
+                        success: function(res) {
+                            if(res.StatusCode=='0') {
+                                localStorage.authCookies='';
+                                localStorage.auth='';
+                                localStorage.UserName='';
 
-                    $(e.currentTarget).html('登录');
-
-                    sl.tip('退出成功！');
+                                sl.tip('退出成功！');
+                                $(e.currentTarget).html('登录');
+                            } else {
+                                sl.tip(res.ErrorMessage);
+                            }
+                        },
+                        error: function() {
+                            this.hide();
+                            sl.tip('网络错误！');
+                        }
+                    });
                 }
             }
         },
@@ -48,14 +65,22 @@
         onCreate: function() {
             var that=this;
 
-            that.$('.J_Signout').show().html(localStorage.authCookies?'退出':'登录').loading('load',{
-                url: '/api/AccService/QueryLoginStatus',
-                check: false,
-                checkData: false,
-                success: function(res) {
-                    console.log(res);
-                }
-            });
+            var $signout=that.$('.J_Signout').css({ position: 'relative' }).show().html(localStorage.authCookies?'退出':'登录');
+            if(localStorage.authCookies)
+                $signout.loading('load',{
+                    url: '/api/AccService/QueryLoginStatus',
+                    check: false,
+                    checkData: false,
+                    success: function(res) {
+                        if(res.ReturnCode!='0000') {
+                            localStorage.authCookies='';
+                            localStorage.auth='';
+                            localStorage.UserName='';
+
+                            that.$('.J_Signout').html('登录');
+                        }
+                    }
+                });
         },
         playUnderlayer: function(underlayer) {
             underlayer.$el.addClass('stop');

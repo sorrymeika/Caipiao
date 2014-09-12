@@ -153,6 +153,9 @@ ul.table li > p { display: table-cell; text-align: center; padding-top: 5px; }
 .ballPool .bd { padding-top: 5px; }
 .ballPool .bd li > p em { display: block; background: url(images/site.png) no-repeat -118px -227px; background-size: 320px auto; width: 36px; height: 36px; font-size: 12px; line-height: 22px; }
 
+.ballPool .bd li > p em.long_text { background:#fff; border: 1px solid #ddd; width: 100px; line-height: 36px; }
+.ballPool .bd li > p em.long_text.curr { background:#c00; color:#fff; border: 1px solid #ddd; width: 100px; line-height: 36px; }
+
 .ballPool.blue { padding-bottom: 10px; }
 .ballPool.red .bd em.curr { background-position: -164px -227px; }
 .ballPool.blue .bd em.curr { background-position: -209px -227px; }

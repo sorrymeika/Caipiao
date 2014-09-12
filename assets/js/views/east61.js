@@ -1,4 +1,4 @@
-﻿define('views/east61',['zepto','ui/sl','app','views/loading','views/selector','util'],function (require,exports,module) {
+﻿define('views/east61',['zepto','ui/sl','app','views/loading','views/selector','util'],function(require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
@@ -22,7 +22,7 @@
                 single: true
             },{
                 type: '00|02',
-                condition: '$0>1||$1>1||$2>1||$3>1||$4>1||$5>1||$6>1',
+                condition: '($0>1||$1>1||$2>1||$3>1||$4>1||$5>1||$6>1)&&($0>0&&$1>0&&$2>0&&$3>0&&$4>0&&$5>0&&$6>0)',
                 codes: '$0$codes0$1$codes1$2$codes2$3$codes3$4$codes4$5$codes5$6$codes6'
             }],
             balls: [{

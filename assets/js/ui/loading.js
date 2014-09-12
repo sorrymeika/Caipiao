@@ -133,9 +133,9 @@
             that._exec();
 
             that._ajax({
-                success: function(res) {
+                success: function(res,status,xhr) {
                     that.isLoad=true;
-                    options.success&&options.success(res);
+                    options.success&&options.success(res,status,xhr);
                     that._exec('hide');
                 },
                 error: options.error&&options.error||function(res) {
@@ -157,7 +157,7 @@
             }
 
             var loading=that.$loading.css({
-                top: that.el.tagName=='body'?'':position in ['absolute','relative','fix']?0:that.$el.position().top
+                top: that.el.tagName=='body'?'':$.inArray(position,['absolute','relative','fix'])!= -1?0:that.$el.position().top
             }).appendTo(that.$el);
 
             if(msg===false||msg==="hide") {
@@ -186,13 +186,13 @@
             var success=opt.success,
                 error=opt.error;
 
-            opt.success=function(res) {
+            opt.success=function(res,status,xhr) {
                 that._xhr=null;
                 if(that.loadingOpt.check===false||that.check(res)) {
 
                     if(that.loadingOpt.checkData===false||that.hasData(res)) {
                         res._params=loadingOpt.data;
-                        success.call(that,res);
+                        success.call(that,res,status,xhr);
 
                         that.loading=false;
                         that.checkAutoRefreshing(res);

@@ -211,7 +211,7 @@
 
                     var count=1;
                     for(var i=ballOpt.range[0],n=ballOpt.range[1];i<=n;i++) {
-                        html+='<p><em data-'+ballOpt.color+'="'+i+'" data-code="'+(ballOpt.codes?ballOpt.codes[count-1]:i)+'">'+(ballOpt.textArray?ballOpt.textArray[count-1]:i)+'</em></p>';
+                        html+='<p><em'+(ballOpt.className?' class="'+ballOpt.className+'"':'')+' data-'+ballOpt.color+'="'+i+'" data-code="'+(ballOpt.codes?ballOpt.codes[count-1]:i)+'">'+(ballOpt.textArray?ballOpt.textArray[count-1]:i)+'</em></p>';
                         if(count%8==0) { html+="</li><li>"; }
 
                         count++
