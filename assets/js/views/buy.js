@@ -1,4 +1,4 @@
-﻿define('views/buy',['zepto','ui/sl','util','app','views/loading','views/allTypes'],function(require,exports,module) {
+﻿define('views/buy',['zepto','ui/sl','util','app','views/loading','views/allTypes'],function (require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
@@ -18,10 +18,10 @@
             'tap .J_Clear': 'clear',
             'tap .J_Random': 'random',
             'tap .J_Buy': 'buy',
-            'tap .J_Select': function() {
+            'tap .J_Select': function () {
                 this.to(this.backUrl)
             },
-            'input .J_Times': function() {
+            'input .J_Times': function () {
                 var $times=this.$('.J_Times'),
                     times=$times.val();
 
@@ -32,7 +32,7 @@
                     return;
                 }
 
-                times=parseInt(times);
+                times=util.s2i(times);
                 if(times==0) {
                     sl.tip('最小输入1');
                     $times.val(this.times);
@@ -46,7 +46,7 @@
                 this.times=times;
                 this._setInfo();
             },
-            'input .J_Number': function() {
+            'input .J_Number': function () {
                 var $number=this.$('.J_Number'),
                     number=$number.val();
 
@@ -57,7 +57,7 @@
                     return;
                 }
 
-                number=parseInt(number);
+                number=util.s2i(number);
                 if(number==0) {
                     sl.tip('最小输入1');
                     $number.val(this.number);
@@ -72,7 +72,7 @@
                 this._setInfo();
             }
         },
-        buy: function() {
+        buy: function () {
             var that=this;
 
             if(that.$('.J_Number').val()==''||that.$('.J_Times').val()=='') {
@@ -90,7 +90,7 @@
                 return;
             }
 
-            sl.prompt('请输入您的投注密码',function(res) {
+            sl.prompt('请输入您的投注密码',function (res) {
                 if(typeof res==='undefined') return;
 
                 var sl_prompt=this;
@@ -112,10 +112,10 @@
                     codes,
                     opt;
 
-                $.each(betData,function(i,code) {
+                $.each(betData,function (i,code) {
                     codes=code.split('|');
 
-                    $.each(that.types,function(j,typeOpt) {
+                    $.each(that.types,function (j,typeOpt) {
                         if(code.indexOf(typeOpt.type)==0) {
                             opt=typeOpt;
                             return false;
@@ -148,19 +148,19 @@
                     url: '/api/CPService/Betting/?ct=json',
                     type: 'POST',
                     data: data,
-                    success: function(res) {
+                    success: function (res) {
                         sl_prompt.hide();
 
                         sl.tip('投注成功！');
                         that.clear();
                     },
-                    error: function(res) {
+                    error: function (res) {
                         if(res.ReturnCode=='90026') {
                             sl_prompt.hide();
 
                             data.OrderID=res.OrderID;
 
-                            sl.prompt('请输入您的短信验证码',function(validCode) {
+                            sl.prompt('请输入您的短信验证码',function (validCode) {
                                 if(typeof validCode==='undefined') return;
 
                                 validCode=$.trim(validCode);
@@ -177,14 +177,14 @@
                                     url: '/api/CPService/Betting/?ct=json',
                                     type: 'POST',
                                     data: data,
-                                    success: function(res) {
+                                    success: function (res) {
                                         vc_prompt.hide();
 
                                         sl.tip('投注成功！');
 
                                         that.clear();
                                     },
-                                    error: function(res) {
+                                    error: function (res) {
                                         if(res.ReturnCode=='90023') {
                                             sl.tip('您的短信验证码输入有误，请重新输入！');
                                         } else if(res.ReturnCode) {
@@ -214,10 +214,10 @@
             },'password');
 
         },
-        random: function() {
+        random: function () {
             this.$('.J_List').append('<li><span>1注 单式</span><i class="ssqNums">04&nbsp;&nbsp;12&nbsp;&nbsp;13&nbsp;&nbsp;14&nbsp;&nbsp;22&nbsp;&nbsp;27</i><span>16</span><em class="ico-delete J_Delete"></em></li>');
         },
-        clear: function() {
+        clear: function () {
             this.$('.J_List li').remove();
             this.total=0;
             localStorage.removeItem(this.BetDataKey);
@@ -225,7 +225,7 @@
 
             this.to(this.backUrl);
         },
-        _setInfo: function(total) {
+        _setInfo: function (total) {
             var that=this,
                 $total=that.$('.J_Total'),
                 $money=that.$('.J_Money'),
@@ -237,7 +237,7 @@
             $total.html(text);
             $money.html('共'+that.times*that.total*2+'元');
         },
-        del: function(e) {
+        del: function (e) {
             var that=this,
                 $target=$(e.currentTarget),
                 $parent=$target.parent(),
@@ -250,24 +250,25 @@
             } else {
                 localStorage[that.BetDataKey]=data.join('#');
 
-                that.total-=parseInt($parent.attr('data-num'));
+                that.total-=util.s2i($parent.attr('data-num'));
 
                 $parent.remove();
                 that._setInfo();
             }
         },
 
-        _loadData: function() {
+        _loadData: function () {
             var that=this;
 
             that.$el.loading('load',{
                 url: '/api/CPService/QueryGameXspar/?ct=json&gameid='+that.GameID+'&wagerissue=',
-                success: function(res) {
+                success: function (res) {
 
                     that.gameData=res.Data[0];
 
                     that.$('.js_curPhase').html(res.Data[0].WagerIssue);
-                    var endTime=new Date(res.Data[0].DrawEndTime.replace(/T|\:/,'-').split('-')),
+
+                    var endTime=eval('new Date('+res.Data[0].DrawEndTime.replace(/T|\:/g,'-').split('-').join(',')+')'),
                         leftTime=(endTime-new Date())/1000;
 
                     if(leftTime<0) {
@@ -278,7 +279,7 @@
                         that.$('.js_leftTime').html("投注剩余"+that.parseTime(leftTime));
                         that.isOver=false;
 
-                        that.interval=setInterval(function() {
+                        that.interval=setInterval(function () {
                             leftTime--;
 
                             if(leftTime<=0) {
@@ -294,7 +295,7 @@
                 }
             });
         },
-        parseTime: function(s) {
+        parseTime: function (s) {
             var h=Math.floor(s/(60*60));
             s=s-h*60*60;
             m=Math.floor(s/60);
@@ -302,7 +303,7 @@
 
             return h+"时"+m+"分"+s+"秒";
         },
-        onCreate: function() {
+        onCreate: function () {
             var that=this,
                 data,
                 total=0;
@@ -319,11 +320,10 @@
                     data=[],
                     opt;
 
-                $.each(sBetData,function(i,item) {
+                $.each(sBetData,function (i,item) {
                     betData=item.split('|');
 
-
-                    $.each(that.types,function(j,typeOpt) {
+                    $.each(that.types,function (j,typeOpt) {
                         if(item.indexOf(typeOpt.type)==0) {
                             opt=typeOpt;
                             return false;
@@ -338,8 +338,8 @@
                         type: betData[1],
                         typeName: opt.name
                     },
-                    replaceCode=function(codes,textArray) {
-                        return codes.replace(/\d{2}/g,function(r) {
+                    replaceCode=function (codes,textArray) {
+                        return codes.replace(/\d{2}/g,function (r) {
                             return textArray?'<em>'+textArray[r]+'</em>':'<em>'+r+"</em>";
                         }).replace(/&nbsp;&nbsp;$/,'')
                     };
@@ -350,35 +350,35 @@
                     if(opt.balls=='$') {
                         var num;
                         while(codes.length) {
-                            num=parseInt(codes.substr(0,2));
+                            num=util.s2i(codes.substr(0,2));
                             codes=codes.substr(2);
                             pools.push([num,codes.substr(0,2*num)]);
                             codes=codes.substr(2*num);
                         }
 
                     } else {
-                        opt.balls.replace(/\$(\d+)/g,function(r0,r1) {
-                            r1=parseInt(r1);
+                        opt.balls.replace(/\$(\d+)/g,function (r0,r1) {
+                            r1=util.s2i(r1);
                             pools.push([r1,codes.substr(0,2*r1)]);
                             codes=codes.substr(2*r1);
                             return '';
                         });
                     }
 
-                    var t=opt.total.replace(/\$(\d+)/g,function(r0,r1) {
-                        return pools[parseInt(r1)][0];
-                    }).replace(/\$/g,function(r0,r1) {
+                    var t=opt.total.replace(/\$(\d+)/g,function (r0,r1) {
+                        return pools[util.s2i(r1)][0];
+                    }).replace(/\$/g,function (r0,r1) {
                         return 'util.';
                     });
 
                     itemData.num=eval(t);
 
-                    itemData.red=opt.red.replace(/\$(\d+)/g,function(r0,r1) {
-                        return replaceCode(pools[parseInt(r1)][1],opt.textArray);
+                    itemData.red=opt.red.replace(/\$(\d+)/g,function (r0,r1) {
+                        return replaceCode(pools[util.s2i(r1)][1],opt.textArray);
                     });
 
-                    itemData.blue=opt.blue&&opt.blue.replace(/\$(\d+)/g,function(r0,r1) {
-                        var code=pools[parseInt(r1)][1];
+                    itemData.blue=opt.blue&&opt.blue.replace(/\$(\d+)/g,function (r0,r1) {
+                        var code=pools[util.s2i(r1)][1];
 
                         return replaceCode(code,opt.blueTextArray);
                     });
@@ -398,11 +398,11 @@
 
             that._loadData();
         },
-        onStart: function() {
+        onStart: function () {
         },
-        onResume: function() {
+        onResume: function () {
         },
-        onDestory: function() {
+        onDestory: function () {
             $('body').loading('abort').loading('hide');
             this.interval&&clearInterval(this.interval);
         }

@@ -18,6 +18,9 @@
 
             return first;
         },
+        s2i: function (s) {
+            return parseInt(s.replace(/^0+/,'')||0);
+        },
         pad: function (num,n) {
             var a='0000000000000000'+num;
             return a.substr(a.length-(n||2));

@@ -5,7 +5,7 @@
         util=require('util'),
         Loading=require('views/loading'),
         Selector=require('views/selector');
-
+        
     module.exports=Selector.extend({
         title: '双色球选号',
         GameID: '10001',
