@@ -134,11 +134,12 @@
             balls: '$3',
             red: '$0'
         },{
-            type: '05|02',
+            type: '04|02',
             name: '二同号复选',
-            total: '1',
-            balls: '$3',
-            red: '$0'
+            total: '$0',
+            balls: '$',
+            red: '$0',
+            textArray: { '01': '11*','02': '22*','03': '33*','04': '44*','05': '55*','06': '66*' }
         },{
             type: '06|01',
             name: '三不同号',
@@ -152,17 +153,33 @@
             balls: '$',
             red: '$0'
         },{
-            type: '07|01',
-            name: '二不同号',
-            total: '1',
-            balls: '$2',
-            red: '$0'
-        },{
             type: '07|02',
-            name: '二不同号复选',
+            name: '二不同号',
             total: '$C($0,2)',
             balls: '$',
-            red: '$0'
+            red: '$0',
+            getSubmitCodes: function(codes) {
+                var balls=[],
+                    num=parseInt(codes.substr(0,2));
+
+                codes=codes.substr(2);
+                console.log(num,codes);
+
+                codes.replace(/\d{2}/g,function(r1) {
+                    balls.push(r1);
+                    return '';
+                });
+
+                var result='';
+                for(var i=0;i<balls.length-1;i++) {
+
+                    for(var j=i+1;j<balls.length;j++) {
+                        result+=util.pad(balls[i])+util.pad(balls[j]);
+                    }
+                }
+
+                return util.pad(util.C(num,2))+result;
+            }
         },{
             type: '08|01',
             name: '三连号通选',

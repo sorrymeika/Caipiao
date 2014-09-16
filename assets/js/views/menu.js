@@ -65,6 +65,16 @@
         onCreate: function() {
             var that=this;
 
+            that.onResume();
+        },
+        playUnderlayer: function(underlayer) {
+            underlayer.$el.addClass('stop');
+        },
+        onStart: function() {
+        },
+        onResume: function() {
+            var that=this;
+
             var $signout=that.$('.J_Signout').css({ position: 'relative' }).show().html(localStorage.authCookies?'退出':'登录');
             if(localStorage.authCookies)
                 $signout.loading('load',{
@@ -72,7 +82,7 @@
                     check: false,
                     checkData: false,
                     success: function(res) {
-                        if(res.ReturnCode!='0000') {
+                        if(res.ReturnCode!='00000') {
                             localStorage.authCookies='';
                             localStorage.auth='';
                             localStorage.UserName='';
@@ -81,15 +91,6 @@
                         }
                     }
                 });
-        },
-        playUnderlayer: function(underlayer) {
-            underlayer.$el.addClass('stop');
-        },
-        onStart: function() {
-        },
-        onResume: function() {
-            this.$('.J_Signout').show().html(localStorage.authCookies?'退出':'登录');
-
         },
         onDestory: function() {
         }

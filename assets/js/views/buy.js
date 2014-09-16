@@ -109,10 +109,23 @@
 
                 var betData=localStorage[that.BetDataKey].split('#'),
                     resultCode=[],
-                    codes;
+                    codes,
+                    opt;
 
                 $.each(betData,function(i,code) {
                     codes=code.split('|');
+
+                    $.each(that.types,function(j,typeOpt) {
+                        if(code.indexOf(typeOpt.type)==0) {
+                            opt=typeOpt;
+                            return false;
+                        }
+                    });
+
+                    if($.isFunction(opt.getSubmitCodes)) {
+                        codes[3]=opt.getSubmitCodes(codes[3]);
+                    }
+
                     codes[2]=util.pad(that.times,4);
                     resultCode.push(codes.join('|'));
                 });
@@ -361,7 +374,7 @@
                     itemData.num=eval(t);
 
                     itemData.red=opt.red.replace(/\$(\d+)/g,function(r0,r1) {
-                        return replaceCode(pools[parseInt(r1)][1]);
+                        return replaceCode(pools[parseInt(r1)][1],opt.textArray);
                     });
 
                     itemData.blue=opt.blue&&opt.blue.replace(/\$(\d+)/g,function(r0,r1) {
