@@ -73,7 +73,7 @@
             if(opt.errors) {
                 $.each(opt.errors,function (i,errorOpt) {
                     var condition=errorOpt[0].replace(/\$(\d+)/g,function (r0,r1) {
-                        return pools[parseInt(r1)][0];
+                        return pools[util.s2i(r1)][0];
                     });
 
                     if(eval(condition)) {
@@ -91,7 +91,7 @@
 
             $.each(opt.types,function (i,typeOpt) {
                 var condition=typeOpt.condition.replace(/\$(\d+)/g,function (r0,r1) {
-                    return pools[parseInt(r1)][0];
+                    return pools[util.s2i(r1)][0];
                 });
                 if(!eval(condition)) {
                     flag=false;
@@ -108,9 +108,9 @@
             }
 
             var betCodes=type.codes.replace(/\$(\d+)/g,function (r0,r1) {
-                return ','+util.pad(pools[parseInt(r1)][0])+',';
+                return ','+util.pad(pools[util.s2i(r1)][0])+',';
             }).replace(/\$codes(\d+)/g,function (r0,r1) {
-                return pools[parseInt(r1)][1];
+                return pools[util.s2i(r1)][1];
             }).replace(/\,/g,function () {
                 return '';
             });
@@ -163,7 +163,7 @@
         _random: function ($container) {
             var $balls=$container.find('.bd em'),
                 target=$container[0],
-                i=parseInt($container.attr('data-num')),
+                i=util.s2i($container.attr('data-num')),
                 max=$balls.length-1;
 
             $balls.removeClass('curr');
@@ -260,10 +260,12 @@
                 success: function (res) {
 
                     that.$('.js_curPhase').html(res.Data[0].WagerIssue);
-                    
+
                     console.log('new Date('+res.Data[0].DrawEndTime.replace(/T|\:/g,'-').split('-').join(',')+')')
 
-                    var endTime=eval('new Date('+res.Data[0].DrawEndTime.replace(/T|\:/g,'-').split('-').join(',')+')'),
+                    var dateArr=res.Data[0].DrawEndTime.replace(/T|\:/g,'-').split('-');
+                    dateArr[1]=util.s2i(dateArr[1])-1;
+                    var endTime=eval('new Date('+dateArr.join(',')+')'),
                         leftTime=(endTime-new Date())/1000;
 
                     if(leftTime<0) {
@@ -346,7 +348,7 @@
             if(opt.errors) {
                 $.each(opt.errors,function (i,errorOpt) {
                     var condition=errorOpt[0].replace(/\$(\d+)/g,function (r0,r1) {
-                        return pools[parseInt(r1)][0];
+                        return pools[util.s2i(r1)][0];
                     });
 
                     if(eval(condition)) {

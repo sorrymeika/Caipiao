@@ -5,7 +5,7 @@
 <script id="order" type="text/template">
     <ul class="prizeinfo">
         <li>${GameID=="10001"?"双色球":GameID=="10003"?"七乐彩":GameID=="10002"?"3D":GameID=="32003"?"快三":GameID=="90015"?"15选5":GameID=="90016"?"福彩6+1":"其他"}${WagerIssue}期</li>
-        <li>状态：${OrderStateCode=="00000"?"出票成功":OrderStateCode=="0"?"未提交":OrderStateCode=="1"?"已提交":OrderStateCode=="2"?"已注销":"未中奖"}</li>
+        <li>状态：${OrderStateCode=="00000"?"出票成功":"出票失败"}</li>
         {%if (Win_Money>0)%}
         <li>中奖金额：${Win_Money/100}元</li>
         {%/if%}

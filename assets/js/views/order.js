@@ -41,7 +41,7 @@
 
                 var itemData={
                     type: betData[1],
-                    times: parseInt(betData[2]),
+                    times: util.s2i(betData[2]),
                     typeName: opt.name
                 },
                 replaceCode=function(codes,textArray) {
@@ -56,7 +56,7 @@
                 if(opt.balls=='$') {
                     var num;
                     while(codes.length) {
-                        num=parseInt(codes.substr(0,2));
+                        num=util.s2i(codes.substr(0,2));
                         codes=codes.substr(2);
                         pools.push([num,codes.substr(0,2*num)]);
                         codes=codes.substr(2*num);
@@ -64,7 +64,7 @@
 
                 } else {
                     opt.balls.replace(/\$(\d+)/g,function(r0,r1) {
-                        r1=parseInt(r1);
+                        r1=util.s2i(r1);
                         pools.push([r1,codes.substr(0,2*r1)]);
                         codes=codes.substr(2*r1);
                         return '';
@@ -73,7 +73,7 @@
 
                 var t=opt.total.replace(/\$(\d+)/g,function(r0,r1) {
                     try {
-                        return pools[parseInt(r1)][0];
+                        return pools[util.s2i(r1)][0];
                     } catch(e) {
                         return '';
                     }
@@ -85,14 +85,14 @@
 
                 itemData.red=opt.red.replace(/\$(\d+)/g,function(r0,r1) {
                     try {
-                        return replaceCode(pools[parseInt(r1)][1]);
+                        return replaceCode(pools[util.s2i(r1)][1]);
                     } catch(e) {
                         return '';
                     }
                 });
 
                 itemData.blue=opt.blue&&opt.blue.replace(/\$(\d+)/g,function(r0,r1) {
-                    var code=pools[parseInt(r1)][1];
+                    var code=pools[util.s2i(r1)][1];
 
                     return replaceCode(code,opt.blueTextArray);
                 });

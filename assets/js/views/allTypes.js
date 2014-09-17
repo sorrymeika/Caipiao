@@ -33,6 +33,7 @@
             red: '$0($1)',
             blue: '$2'
         }],
+        //3d
         t_10002: [{
             type: '01|01',
             name: '单式',
@@ -41,11 +42,11 @@
             red: '$0',
             maxTimes: 99
         },{
-            type: '01|06',
+            type: '01|02',
             name: '复式',
             total: '$0*$1*$2',
             balls: '$',
-            red: '$0($1)($2)'
+            red: '($0)($1)($2)'
         },{
             type: '02|01',
             name: '组3单式',
@@ -160,7 +161,7 @@
             red: '$0',
             getSubmitCodes: function(codes) {
                 var balls=[],
-                    num=parseInt(codes.substr(0,2));
+                    num=util.s2i(codes.substr(0,2));
 
                 codes=codes.substr(2);
                 console.log(num,codes);

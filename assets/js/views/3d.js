@@ -21,7 +21,7 @@
                 single: true,
                 codes: '$codes0$codes1$codes2'
             },{
-                type: '01|06',
+                type: '01|02',
                 condition: '$0>1||$1>1||$2>1',
                 codes: '$0$codes0$1$codes1$2$codes2'
             }],

@@ -449,7 +449,7 @@
                 me=that.currentActivity,
                 innerHeight=window.innerHeight,
                 scrollY=window.scrollY,
-                top=parseInt(me.$el.css('top'))||0,
+                top=util.s2i(me.$el.css('top'))||0,
                 marginBottom=me.$el.css('marginBottom')||"";
 
             me.$el.attr({ 'amin-temp-top': top,'amin-temp-margin-bottom': marginBottom,'amin-temp-scrolltop': scrollY }).css({ top: top-scrollY,height: innerHeight+scrollY-top,marginBottom: top-scrollY });

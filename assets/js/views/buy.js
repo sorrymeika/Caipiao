@@ -268,7 +268,9 @@
 
                     that.$('.js_curPhase').html(res.Data[0].WagerIssue);
 
-                    var endTime=eval('new Date('+res.Data[0].DrawEndTime.replace(/T|\:/g,'-').split('-').join(',')+')'),
+                    var dateArr=res.Data[0].DrawEndTime.replace(/T|\:/g,'-').split('-');
+                    dateArr[1]=util.s2i(dateArr[1])-1;
+                    var endTime=eval('new Date('+dateArr.join(',')+')'),
                         leftTime=(endTime-new Date())/1000;
 
                     if(leftTime<0) {
