@@ -1,4 +1,4 @@
-﻿define('views/login',['zepto','ui/sl','ui/tabs','app','ui/loading'],function (require,exports,module) {
+﻿define('views/login',['zepto','ui/sl','ui/tabs','app','ui/loading'],function(require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
@@ -10,10 +10,10 @@
             'tap .J_Back': 'back',
             'tap .J_Login': 'login'
         },
-        login: function () {
+        login: function() {
             var that=this;
 
-            app.exec('login',function (res) {
+            app.exec('login',function(res) {
                 localStorage.auth=JSON.stringify(res);
                 localStorage.UserName=res.UserName;
                 localStorage.authCookies=".ASPXCOOKIEWebApi="+res[".ASPXCOOKIEWebApi"]+"; ASP.NET_SessionId="+res["ASP.NET_SessionId"];
@@ -21,14 +21,16 @@
                 that.to('/');
             });
         },
-        onCreate: function () {
+        onCreate: function() {
             var that=this;
+
+            that.login();
         },
-        onStart: function () {
+        onStart: function() {
         },
-        onResume: function () {
+        onResume: function() {
         },
-        onDestory: function () {
+        onDestory: function() {
         }
     });
 });

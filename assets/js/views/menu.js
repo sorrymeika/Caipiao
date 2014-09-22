@@ -16,7 +16,19 @@
                 this.to('/');
             },
             'tap .J_User': function() {
-                this.to(localStorage.authCookies?'/user.html':'/login.html');
+                var that=this;
+
+                if(localStorage.authCookies) {
+
+                    that.to('/user.html');
+                } else
+                    app.exec('login',function(res) {
+                        localStorage.auth=JSON.stringify(res);
+                        localStorage.UserName=res.UserName;
+                        localStorage.authCookies=".ASPXCOOKIEWebApi="+res[".ASPXCOOKIEWebApi"]+"; ASP.NET_SessionId="+res["ASP.NET_SessionId"];
+
+                        that.to('/user.html');
+                    });
             },
             'tap .J_Prize': function() {
                 this.to('/prizeList.html');
@@ -31,7 +43,14 @@
                 var that=this;
 
                 if(!localStorage.authCookies) {
-                    that.to('/login.html');
+                    app.exec('login',function(res) {
+                        localStorage.auth=JSON.stringify(res);
+                        localStorage.UserName=res.UserName;
+                        localStorage.authCookies=".ASPXCOOKIEWebApi="+res[".ASPXCOOKIEWebApi"]+"; ASP.NET_SessionId="+res["ASP.NET_SessionId"];
+
+                        that.to('/');
+                    });
+
                 } else {
                     that.$('.J_Signout').css({ position: 'relative' }).loading('load',{
                         url: '/api/AccService/Logout',
