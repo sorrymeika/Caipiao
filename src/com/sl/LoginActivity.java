@@ -187,7 +187,7 @@ public class LoginActivity extends Activity {
 
 	private void finishActivity() {
 		if (IsLogining) {
-			tip("姝ｅ湪鐧诲綍锛岃绋嶅��...");
+			tip("正在登录，请稍候...");
 			return;
 		}
 
