@@ -17,7 +17,7 @@
         <ul class="table">
             <li><p>奖项</p><p>中奖注数</p><p>中奖金额</p></li>
             {%each(j,grade) grade_array%}
-            <li><p>${j+1}等奖</p><p>${grade.WIN_NUMBER}</p><p>${grade.WIN_MONEY}</p></li>
+            <li><p>${grade.WIN_NAME}</p><p>${grade.WIN_NUMBER}</p><p>${grade.WIN_MONEY}</p></li>
             {%/each%}
         </ul>
     </div>

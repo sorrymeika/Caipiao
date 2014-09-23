@@ -301,7 +301,13 @@
                             okText: '立即登录'
 
                         },function () {
-                            that.to('/login.html');
+                            app.exec('login',function(res) {
+                                localStorage.auth=JSON.stringify(res);
+                                localStorage.UserName=res.UserName;
+                                localStorage.authCookies=".ASPXCOOKIEWebApi="+res[".ASPXCOOKIEWebApi"]+"; ASP.NET_SessionId="+res["ASP.NET_SessionId"];
+
+                                that._loadData();
+                            });
                         },function () {
                             that.to('/');
                         });
