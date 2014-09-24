@@ -198,7 +198,8 @@ ul.table li > p { display: table-cell; text-align: center; padding-top: 5px; }
 .buyInfo i { display: block; color: #e9bd16; margin-top: 3px; }
 .buyInfo em { display: block; }
 .buyInfo li { height: 100%; width: 0px; display: block; -webkit-box-flex: 1; text-align: center; color: #fff; }
-.buyInfo li input { height: 32px; margin-top: 7px; width: 90%; color: #fff; background-color: #b7152d; border: 0; }
+.buyInfo li input,.buyInfo li div { height: 32px; margin-top: 7px; width: 90%; color: #fff; background-color: #b7152d; border: 0; display: inline-block;}
+.buyInfo li div {line-height: 32px;}
 
 .menu { width: 60%; background: #1f1f21; height: 100%; }
 .menu ul { padding-top: 10px; }
