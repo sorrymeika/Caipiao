@@ -158,6 +158,9 @@
         index: -1,
         _bindAttrs: [],
         $: function (selector) {
+            if(typeof selector==="string"&&selector[0]=='#') {
+                selector='[id="'+selector.substr(1)+'"]';
+            }
             return $(selector,this.$el);
         },
         one: function (name,f) {
@@ -605,7 +608,7 @@
             var that=this,
                 innerHeight=window.innerHeight;
 
-            if(!that.el.parentNode) {            
+            if(!that.el.parentNode) {
                 that.$el.appendTo(that.$viewport);
                 that.el.clientHeight;
             }
@@ -654,7 +657,7 @@
             } else {
                 that.el.className=that.className+" "+that.animateInClassName+" run active";
                 that._resetHeight();
-                
+
                 that.$('footer').css({ position: '' });
             }
 
@@ -683,8 +686,8 @@
                 }).addClass("run");
 
             } else {
-                that.el.className=that.className+" "+that.animateOutClassName+" stop";                
-           		that.$('footer').css({ position: 'absolute' });
+                that.el.className=that.className+" "+that.animateOutClassName+" stop";
+                that.$('footer').css({ position: 'absolute' });
                 that.$el.remove();
             }
 
