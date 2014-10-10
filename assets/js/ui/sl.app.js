@@ -1,4 +1,4 @@
-﻿define('ui/sl.app',['$','app','tmpl','ui/sl'],function (require,exports,module) {
+﻿define('ui/sl.app',['$','app','tmpl','ui/sl'],function(require,exports,module) {
     var $=require('$'),
 		sl=require('ui/sl'),
 		tmpl=require('tmpl'),
@@ -22,7 +22,7 @@
         if(typeof record!=='undefined') {
             dfd.resolveWith(that,[record]);
         } else
-            $.get(url,function (template) {
+            $.get(url,function(template) {
                 var templates=[],
                     includes=[];
 
@@ -32,10 +32,10 @@
                     includes: []
                 };
 
-                template=template.replace(/<include src=("|')(.+?)\1[^>]*?>/img,function (r0,r1,r2) {
+                template=template.replace(/<include src=("|')(.+?)\1[^>]*?>/img,function(r0,r1,r2) {
                     var replacement='<include_'+r2+'>';
-                    includes.push(function () {
-                        return getTemplate.call(that,r2).done(function (rec) {
+                    includes.push(function() {
+                        return getTemplate.call(that,r2).done(function(rec) {
                             record.main=record.main.replace(replacement,rec.main);
                             record.includes.push(rec);
                         });
@@ -43,7 +43,7 @@
                     return replacement;
                 });
 
-                template=template.replace(/<script([^>]+)>([\S\s]+?)<\/script>/mgi,function (r0,r1,r2) {
+                template=template.replace(/<script([^>]+)>([\S\s]+?)<\/script>/mgi,function(r0,r1,r2) {
                     var m=r1.match(/\bid=("|')(.+?)\1/i);
                     if(m) {
                         record._templates[m[2]]=templates.length;
@@ -54,8 +54,8 @@
 
                 templates.push(template);
 
-                $.each(templates,function (i,str) {
-                    templates[i]=str.replace(/\{\%include\s+(\w+)\%\}/mgi,function (r0,r1) {
+                $.each(templates,function(i,str) {
+                    templates[i]=str.replace(/\{\%include\s+(\w+)\%\}/mgi,function(r0,r1) {
                         return templates[record._templates[r1]];
                     });
                 })
@@ -68,7 +68,7 @@
                     while(includes.length) {
                         incDfd=incDfd.then(includes.shift());
                     }
-                    incDfd.then(function () {
+                    incDfd.then(function() {
                         dfd.resolveWith(that,[record]);
                     });
                 } else
@@ -78,16 +78,16 @@
     };
 
     sl.Activity=sl.Activity.extend({
-        init: function () {
+        init: function() {
             var that=this;
 
-            return getTemplate.call(that,that.template).done(function (record) {
+            return getTemplate.call(that,that.template).done(function(record) {
                 that.$el.html(record.main);
                 that.templates=record;
             });
         },
         template: 'views/home.html',
-        getTemplate: function (name,tmpl) {
+        getTemplate: function(name,tmpl) {
             var that=this;
 
             tmpl=tmpl||this.templates;
@@ -107,7 +107,7 @@
             }
             return null;
         },
-        tmpl: function (/*name[,url][,data]*/) {
+        tmpl: function(/*name[,url][,data]*/) {
             var that=this,
                 args=slice.apply(arguments),
                 i=0,
@@ -124,10 +124,10 @@
                     data: data,
                     dataType: 'json',
                     type: 'post',
-                    success: function (res) {
+                    success: function(res) {
                         dfd.resolveWith(that,[tmpl(template,res)]);
                     },
-                    error: function () {
+                    error: function() {
                         dfd.reject();
                     }
                 });
@@ -137,7 +137,7 @@
                 return tmpl(template,data);
             }
         },
-        reload: function (options) {
+        reload: function(options) {
             var that=this;
 
             that.trigger('Reload');
@@ -147,7 +147,7 @@
 
             that._load();
         },
-        load: function (options) {
+        load: function(options) {
             var that=this;
             that.loadingOpt=options=$.extend({
                 url: '',
@@ -158,7 +158,7 @@
 
             that._load();
         },
-        _load: function () {
+        _load: function() {
             var that=this,
                 options=that.loadingOpt,
                 loading=true,
@@ -172,7 +172,7 @@
 
             that._loading();
 
-            that._loadingXhr=app.post(options.url,data,function (res) {
+            that._loadingXhr=app.post(options.url,data,function(res) {
                 that._loadingXhr=null;
 
                 if(res&&res.success) {
@@ -185,17 +185,17 @@
 
                         if(res.total&&res.total>data.page*data.pageSize) {
                             var refreshing=$('<div class="refreshing"></div>').appendTo(container),
-                            scrollOff=function () {
+                            scrollOff=function() {
                                 $(window).off('scroll',f);
                             },
                             _scrollY=window.scrollY,
-                            f=function () {
+                            f=function() {
                                 if(!loading&&_scrollY<window.scrollY&&window.scrollY+window.innerHeight>=document.body.scrollHeight-40) {
                                     if(that._loadingXhr) that._loadingXhr.abort();
 
                                     refreshing.html('正在载入...');
                                     loading=true;
-                                    that._loadingXhr=app.post(options.url,data,function (res) {
+                                    that._loadingXhr=app.post(options.url,data,function(res) {
                                         that._loadingXhr=null;
                                         if(res&&res.success) {
                                             if(res.data) {
@@ -215,7 +215,7 @@
 
                                             } else {
                                                 refreshing.html('暂无数据');
-                                                setTimeout(function () {
+                                                setTimeout(function() {
                                                     refreshing.animate({ height: 0 },300,'ease-out');
                                                 },3000);
                                             }
@@ -228,14 +228,14 @@
                                 }
                                 _scrollY=window.scrollY;
                             },
-                            scrollOn=function () {
+                            scrollOn=function() {
                                 $(window).on('scroll',f);
                             };
 
                             that.bind('Destory',scrollOff);
                             that.bind('Pause',scrollOff);
                             that.bind('Resume',scrollOn);
-                            that.one('Reload',function () {
+                            that.one('Reload',function() {
                                 that.unbind('Destory',scrollOff);
                                 that.unbind('Pause',scrollOff);
                                 that.unbind('Resume',scrollOn);
@@ -256,6 +256,26 @@
             });
         }
     });
+
+    sl.checkUpdate=function() {
+        var dfd=$.Deferred();
+
+        $.ajax({
+            url: app.url("/api/CPService/CheckVersion/?ct=json&apptype="+(app.isAndroid?0:1)),
+            dataType: 'json',
+            success: function(res) {
+                if(res.ReturnCode=="00000") {
+                    dfd.resolve(res.DownLoadUrl,res.Version,res.UpdateMsg);
+                } else
+                    dfd.reject(res.ReturnCode+"错误");
+            },
+            error: function() {
+                dfd.reject("网络错误");
+            }
+        });
+
+        return dfd;
+    };
 
     module.exports=sl;
 });

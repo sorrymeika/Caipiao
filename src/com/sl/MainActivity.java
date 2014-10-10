@@ -69,6 +69,7 @@ public class MainActivity extends Activity {
 
 	private static final String TAG = "SensorActivity";
 	private static final int SENSOR_SHAKE = 10;
+	private UpdateDialog updateManage;
 
 	private Handler threadHandler = new Handler() {
 
@@ -223,6 +224,8 @@ public class MainActivity extends Activity {
 			finish();
 			System.exit(0);
 
+		} else if ("getAppInfo".equals(method)) {
+
 		} else if ("colorpicker".equals(method)) {
 			ColorPickerDialog colorpicker = new ColorPickerDialog(this,
 					0xFFFFFF, "选择背景色",
@@ -266,11 +269,17 @@ public class MainActivity extends Activity {
 
 			startActivityForResult(i, RESULT_LOAD_IMAGE);
 
-		} else if ("checkUpdate".equals(method)) {
-			Log.d("checkUpdate", "begin checkUpdate");
-			UpdateDialog manager = new UpdateDialog(MainActivity.this);
+		} else if ("updateApp".equals(method)) {
+			Log.d("updateApp", "begin updateApp");
+			JSONObject data = (JSONObject) params;
 			// 检查软件更新
-			manager.checkUpdate();
+			try {
+				updateManage.showNoticeDialog(data.getString("downloadUrl"),
+						data.getString("versionName"));
+
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 
 		} else {
 
@@ -439,6 +448,8 @@ public class MainActivity extends Activity {
 		});
 
 		// setFullScreen();
+
+		updateManage = new UpdateDialog(MainActivity.this);
 
 		loadWebView();
 

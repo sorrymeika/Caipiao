@@ -1,13 +1,13 @@
-﻿define('app',['util'],function (require,exports,module) {
+﻿define('app',['util'],function(require,exports,module) {
 
     var util=require('util'),
         isiPhone=/iPhone/.test(navigator.userAgent),
         isAndroid=/Android/.test(navigator.userAgent),
         slice=Array.prototype.slice,
-        blankFn=function () { };
+        blankFn=function() { };
 
     window.callbackfunctions={};
-    window.complete=function () {
+    window.complete=function() {
         if(isiPhone&&queue.length!=0) {
             queue.shift();
             if(queue.length!=0) location.href=queue.shift();
@@ -15,7 +15,7 @@
     };
 
     var queue=[],funcguid=0,stringify=util.stringify,
-        appFunc=function (method,params,callback) {
+        appFunc=function(method,params,callback) {
 
             var data={
                 method: method
@@ -34,7 +34,7 @@
                     var funcName="mycallback"+(++funcguid),
                         f=callback;
                     data.callback=funcName;
-                    callbackfunctions[funcName]=function () {
+                    callbackfunctions[funcName]=function() {
                         f.apply(null,arguments);
                         delete callbackfunctions[funcName];
                     };
@@ -44,7 +44,7 @@
             if(data.method=="post") {
                 result={};
                 if(data.params.files) {
-                    result.abort=function () {
+                    result.abort=function() {
                         if(window.callbackfunctions[data.callback])
                             window.callbackfunctions[data.callback]=blankFn;
                     };
@@ -55,15 +55,15 @@
                         data: data.params.data,
                         type: 'POST',
                         dataType: 'json',
-                        success: function (res) {
+                        success: function(res) {
                             console.log(res);
                             window.callbackfunctions[data.callback](res);
                         },
-                        error: function (res) {
+                        error: function(res) {
                             window.callbackfunctions[data.callback]({ success: false,msg: '网络错误' });
                         }
                     });
-                    result.abort=function () {
+                    result.abort=function() {
                         result.xhr.abort();
                         if(window.callbackfunctions[data.callback])
                             window.callbackfunctions[data.callback]=blankFn;
@@ -104,29 +104,30 @@
 
     return {
         isAndroid: isAndroid,
+        versionName: isAndroid?'1.0':"1.0",
         exec: appFunc,
-        load: function (f) {
-            appFunc('onload',function () {
+        load: function(f) {
+            appFunc('onload',function() {
                 f&&f();
             });
         },
-        tip: function (msg) {
+        tip: function(msg) {
             appFunc('tip',msg+"");
         },
-        selectImage: function (f) {
+        selectImage: function(f) {
             appFunc('selectimage',f);
         },
-        selectColor: function (f) {
+        selectColor: function(f) {
             appFunc('colorpicker',f);
         },
-        share: function () {
+        share: function() {
             appFunc('share');
         },
         isDevelopment: navigator.platform=="Win32"||navigator.platform=="Win64",
-        url: function (url) {
+        url: function(url) {
             return /^http\:\/\//.test(url)?url:navigator.platform=="Win32"||navigator.platform=="Win64"?'/assets/Index.cshtml?path='+encodeURIComponent(url):('http://ms1.962666.com'+url);
         },
-        post: function () {
+        post: function() {
             var args=slice.call(arguments),
                 i=0,
                 cache=args[i++],
@@ -154,7 +155,7 @@
             if(data) postData.data=data;
             if(files) postData.files=files;
 
-            return appFunc('post',postData,function (res) {
+            return appFunc('post',postData,function(res) {
                 if(cache===true) {
                     if(!res) {
                         var str=localStorage[url+"_"+(postData.data&&postData.data.page?postData.data.page:1)];
@@ -166,11 +167,14 @@
                 callback(res);
             });
         },
-        exit: function () {
+        exit: function() {
             appFunc('exit');
         },
-        checkUpdate: function () {
-            appFunc('checkUpdate');
+        update: function(downloadUrl,versionName,f) {
+            appFunc('updateApp',{
+                downloadUrl: downloadUrl,
+                versionName: versionName
+            },f);
         }
     };
 
