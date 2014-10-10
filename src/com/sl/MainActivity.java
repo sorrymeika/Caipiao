@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -38,6 +39,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebSettings.TextSize;
+import android.widget.Button;
 import android.widget.Toast;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -248,8 +250,10 @@ public class MainActivity extends Activity {
 		} else if ("login".equals(method)) {
 			loginCallback = callback;
 
-			Intent i = new Intent(MainActivity.this, LoginActivity.class);
-			startActivityForResult(i, RESULT_LOGIN);
+			loginButton.performClick();
+
+			// Intent i = new Intent(MainActivity.this, LoginActivity.class);
+			// startActivityForResult(i, RESULT_LOGIN);
 
 			// login.start(callback);
 
@@ -414,6 +418,7 @@ public class MainActivity extends Activity {
 	}
 
 	private Boolean created = false;
+	private Button loginButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -421,6 +426,17 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		this.findViewById(R.id.loading).setVisibility(View.VISIBLE);
+
+		loginButton = (Button) this.findViewById(R.id.button1);
+		loginButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(MainActivity.this, LoginActivity.class);
+				startActivityForResult(i, RESULT_LOGIN);
+			}
+
+		});
 
 		// setFullScreen();
 
