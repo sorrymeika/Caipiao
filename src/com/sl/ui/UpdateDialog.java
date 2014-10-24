@@ -111,28 +111,20 @@ public class UpdateDialog {
 		this.downloadUrl = downloadUrl;
 		this.apkVersionName = apkVersionName;
 
-		// 构造对话框
-		AlertDialog.Builder builder = new Builder(mContext);
-		builder.setTitle("软件更新");
-		builder.setMessage("检测到新版本，立即更新吗？");
-		// 更新
-		builder.setPositiveButton("确定", new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-				// 显示下载对话框
-				showDownloadDialog();
-			}
-		});
-		// 稍后更新
-		builder.setNegativeButton("取消", new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		});
-		Dialog noticeDialog = builder.create();
-		noticeDialog.show();
+		showDownloadDialog();
+		/*
+		 * // 构造对话框 AlertDialog.Builder builder = new Builder(mContext);
+		 * builder.setTitle("软件更新"); builder.setMessage("检测到新版本，立即更新吗？"); // 更新
+		 * builder.setPositiveButton("确定", new OnClickListener() {
+		 * 
+		 * @Override public void onClick(DialogInterface dialog, int which) {
+		 * dialog.dismiss(); // 显示下载对话框 showDownloadDialog(); } }); // 稍后更新
+		 * builder.setNegativeButton("取消", new OnClickListener() {
+		 * 
+		 * @Override public void onClick(DialogInterface dialog, int which) {
+		 * dialog.dismiss(); } }); Dialog noticeDialog = builder.create();
+		 * noticeDialog.show();
+		 */
 	}
 
 	/**
