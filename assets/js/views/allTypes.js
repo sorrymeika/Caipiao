@@ -1,11 +1,11 @@
-﻿define('views/allTypes',['zepto','util'],function(require,exports,module) {
+﻿define('views/allTypes',['zepto','util'],function (require,exports,module) {
     var $=require('zepto'),
         util=require('util');
 
     var texts='鼠 牛 虎 兔 龙 蛇 马 羊 猴 鸡 狗 猪'.split(' '),
         east61Texts={};
 
-    $.each(texts,function(i,text) {
+    $.each(texts,function (i,text) {
         east61Texts[util.pad(i+1)]=text;
     });
 
@@ -58,6 +58,12 @@
             name: '组3复式',
             total: '$A($0,2)',
             balls: '$',
+            red: '$0'
+        },{
+            type: '03|01',
+            name: '组6',
+            total: '1',
+            balls: '$3',
             red: '$0'
         },{
             type: '03|06',
@@ -159,14 +165,14 @@
             total: '$C($0,2)',
             balls: '$',
             red: '$0',
-            getSubmitCodes: function(codes) {
+            getSubmitCodes: function (codes) {
                 var balls=[],
                     num=util.s2i(codes.substr(0,2));
 
                 codes=codes.substr(2);
                 console.log(num,codes);
 
-                codes.replace(/\d{2}/g,function(r1) {
+                codes.replace(/\d{2}/g,function (r1) {
                     balls.push(r1);
                     return '';
                 });

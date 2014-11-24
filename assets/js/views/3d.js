@@ -1,4 +1,4 @@
-﻿define('views/3d',['zepto','ui/sl','app','views/loading','views/selector','util'],function(require,exports,module) {
+﻿define('views/3d',['zepto','ui/sl','app','views/loading','views/selector','util'],function (require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
@@ -90,6 +90,10 @@
             name: '组六选号',
             randomFlag: false,
             types: [{
+                type: '03|01',
+                condition: '$0==3',
+                codes: '$codes0'
+            },{
                 type: '03|06',
                 condition: '$0>=3',
                 codes: '$0$codes0'

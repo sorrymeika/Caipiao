@@ -102,10 +102,12 @@
                     return false;
                 }
 
+                /*
                 if(!/^\d{6}$/.test(res)) {
                     sl.tip('您的投注密码输入有误，请重新输入！');
                     return false;
                 }
+                */
 
                 var betData=localStorage[that.BetDataKey].split('#'),
                     resultCode=[],
