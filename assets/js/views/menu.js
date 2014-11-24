@@ -74,6 +74,35 @@
                         }
                     });
                 }
+            },
+            'tap .J_CheckUpdate': function(e) {
+                var that=this;
+
+                that.$('.J_CheckUpdate').addClass('ico_loading');
+
+                sl.checkUpdate()
+                    .done(function(downloadUrl,versionName) {
+
+                        if(app.versionName!=versionName)
+                            sl.confirm({
+                                title: '检查更新',
+                                content: '发现了新版本,是否更新',
+                                okText: '立即更新'
+
+                            },function() {
+                                app.update(downloadUrl,versionName);
+
+                            },function() {
+                            });
+                        else {
+                            sl.tip("已是最新版本");
+                        }
+                        that.$('.J_CheckUpdate').removeClass('ico_loading');
+                    })
+                    .fail(function(res) {
+                        that.$('.J_CheckUpdate').removeClass('ico_loading');
+                        sl.tip(res);
+                    });
             }
         },
         toBack: function(e) {

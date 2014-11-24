@@ -1,4 +1,4 @@
-﻿* { margin: 0; padding: 0; font-style: normal; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); list-style: none; box-sizing: border-box; }
+﻿html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video { margin: 0; padding: 0; font-style: normal; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); list-style: none; box-sizing: border-box; }
 body, html { width: 100%; overflow-x: hidden; }
 img { background: #e7e7e7 url(images/imgbg.png) center center no-repeat; background-size: 60% auto; }
 a { text-decoration: none; color: #333; }
@@ -70,6 +70,7 @@ input[type="password"].prompt-text { letter-spacing: 2px; }
 .dataloading:before { top: 50%; left: 50%; margin: -20px 0 0 -20px; position: absolute; content: ""; }
 .dataloading:before { width: 40px; height: 40px; text-indent: -10000px; background: url('images/dataloading.png') 0 0 no-repeat; -webkit-background-size: 40px 40px; -webkit-animation-name: ui-loading-anim; -webkit-animation-duration: 1s; -webkit-animation-iteration-count: infinite; -webkit-animation-timing-function: step-start; }
 .dataloading.loading-error:before { display: none; }
+
 
 .refreshing { line-height: 50px; height: 50px; background: #ddd; color: #2E435D; text-align: center; width: 100%; z-index: 1; -webkit-transition: height 300ms ease 0ms; }
 
@@ -203,12 +204,16 @@ ul.table li > p { display: table-cell; text-align: center; padding-top: 5px; }
 
 .menu { width: 60%; background: #1f1f21; height: 100%; }
 .menu ul { padding-top: 10px; }
-.menu li { height: 57px; color: #aeafb4; line-height: 57px; padding: 0 10px; }
+.menu li { height: 50px; color: #aeafb4; line-height: 50px; padding: 0 10px; }
 .menu li:before { display: inline-block; background: url(images/site.png) no-repeat -169px -271px; background-size: 320px auto; width: 25px; height: 25px; content: ''; vertical-align: -6px; margin: 0 4px; }
 
 .menu li.ico-menu-my:before { background-position: -213px -271px; }
 .menu li.ico-menu-prize:before { background-position: -8px -309px; }
 .menu li.ico-menu-news:before { background-position: -46px -309px; }
+.menu li.ico-menu-update:before { background-position: 100px 100px; }
+
+.menu li.ico-menu-update.ico_loading:before { width: 25px; height: 25px; background: url('images/dataloading.png') 0 0 no-repeat; -webkit-background-size: 25px 25px; -webkit-animation-name: ui-loading-anim; -webkit-animation-duration: 1s; -webkit-animation-iteration-count: infinite; -webkit-animation-timing-function: step-start;  }
+
 
 .menu li.curr { color: #fff; border-left: 3px solid #ff0300; padding-left: 7px; }
 

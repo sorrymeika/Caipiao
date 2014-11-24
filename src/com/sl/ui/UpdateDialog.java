@@ -48,14 +48,16 @@ public class UpdateDialog {
 	private static final int DOWNLOAD = 1;
 	/* 下载结束 */
 	private static final int DOWNLOAD_FINISH = 2;
-	/* 保存解析的XML信息 */
-	HashMap<String, String> mHashMap;
+
 	/* 下载保存路径 */
 	private String mSavePath;
 	/* 记录进度条数量 */
 	private int progress;
 	/* 是否取消更新 */
 	private boolean cancelUpdate = false;
+
+	private String downloadUrl;
+	private String apkVersionName;
 
 	private Context mContext;
 	/* 更新进度条 */
@@ -84,106 +86,18 @@ public class UpdateDialog {
 		this.mContext = context;
 	}
 
-	private Handler threadHandler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-
-			Bundle bundle = msg.getData();
-			switch (msg.what) {
-			case 0:
-				boolean flag = false;
-				int versionCode = getVersionCode(mContext);
-				String checkUpdateResult = bundle.getString("result");
-				Log.d("checkUpdateResult", checkUpdateResult);
-				if (null != checkUpdateResult && !"".equals(checkUpdateResult)) {
-
-					try {
-						JSONObject result = new JSONObject(checkUpdateResult);
-
-						mHashMap = new HashMap<String, String>();
-						mHashMap.put("version", result.getString("version"));
-						mHashMap.put("name", result.getString("name"));
-						mHashMap.put("url", result.getString("url"));
-
-						int serviceCode = Integer.valueOf(mHashMap
-								.get("version"));
-						// 版本判断
-						if (serviceCode > versionCode) {
-							flag = true;
-						}
-
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				}
-
-				if (flag) {
-					// 显示提示对话框
-					showNoticeDialog();
-				} else {
-					Toast.makeText(mContext, "已经是最新版本", Toast.LENGTH_LONG)
-							.show();
-				}
-				break;
-			}
-		}
-	};
-
-	/**
-	 * 检测软件更新
-	 */
-	public void checkUpdate() {
-
-		new Thread() {
-			@Override
-			public void run() {
-				Message msg = new Message();
-				Bundle bundle = new Bundle();
-
-				bundle.putString("result", UpdateDialog.this.isUpdate());
-
-				msg.setData(bundle);
-				msg.what = 0;
-
-				threadHandler.sendMessage(msg);
-			}
-		}.start();
-	}
-
-	/**
-	 * 检查软件是否有更新版本
-	 * 
-	 * @return
-	 */
-	public String isUpdate() {
-		// 获取当前软件版本
-
-		try {
-			String result = HttpUtil.get("http://shaoer.ie9e.com/update.txt");
-
-			Log.d("isUpdate", result);
-
-			return result;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	/**
 	 * 获取软件版本号
 	 * 
 	 * @param context
 	 * @return
 	 */
-	private int getVersionCode(Context context) {
+	public int getVersionCode(Context context) {
 		int versionCode = 0;
 		try {
 			// 获取软件版本号，对应AndroidManifest.xml下android:versionCode
 			versionCode = context.getPackageManager().getPackageInfo(
-					"com.sl.inanswer", 0).versionCode;
+					"com.sl.caipiao", 0).versionCode;
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -193,29 +107,24 @@ public class UpdateDialog {
 	/**
 	 * 显示软件更新对话框
 	 */
-	private void showNoticeDialog() {
-		// 构造对话框
-		AlertDialog.Builder builder = new Builder(mContext);
-		builder.setTitle("软件更新");
-		builder.setMessage("检测到新版本，立即更新吗？");
-		// 更新
-		builder.setPositiveButton("确定", new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-				// 显示下载对话框
-				showDownloadDialog();
-			}
-		});
-		// 稍后更新
-		builder.setNegativeButton("取消", new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		});
-		Dialog noticeDialog = builder.create();
-		noticeDialog.show();
+	public void showNoticeDialog(String downloadUrl, String apkVersionName) {
+		this.downloadUrl = downloadUrl;
+		this.apkVersionName = apkVersionName;
+
+		showDownloadDialog();
+		/*
+		 * // 构造对话框 AlertDialog.Builder builder = new Builder(mContext);
+		 * builder.setTitle("软件更新"); builder.setMessage("检测到新版本，立即更新吗？"); // 更新
+		 * builder.setPositiveButton("确定", new OnClickListener() {
+		 * 
+		 * @Override public void onClick(DialogInterface dialog, int which) {
+		 * dialog.dismiss(); // 显示下载对话框 showDownloadDialog(); } }); // 稍后更新
+		 * builder.setNegativeButton("取消", new OnClickListener() {
+		 * 
+		 * @Override public void onClick(DialogInterface dialog, int which) {
+		 * dialog.dismiss(); } }); Dialog noticeDialog = builder.create();
+		 * noticeDialog.show();
+		 */
 	}
 
 	/**
@@ -267,7 +176,7 @@ public class UpdateDialog {
 					String sdpath = Environment.getExternalStorageDirectory()
 							+ "/";
 					mSavePath = sdpath + "download";
-					URL url = new URL(mHashMap.get("url"));
+					URL url = new URL(downloadUrl);
 					// 创建连接
 					HttpURLConnection conn = (HttpURLConnection) url
 							.openConnection();
@@ -282,7 +191,7 @@ public class UpdateDialog {
 					if (!file.exists()) {
 						file.mkdir();
 					}
-					File apkFile = new File(mSavePath, mHashMap.get("name"));
+					File apkFile = new File(mSavePath, apkVersionName);
 					FileOutputStream fos = new FileOutputStream(apkFile);
 					int count = 0;
 					// 缓存
@@ -320,7 +229,7 @@ public class UpdateDialog {
 	 * 安装APK文件
 	 */
 	private void installApk() {
-		File apkfile = new File(mSavePath, mHashMap.get("name"));
+		File apkfile = new File(mSavePath, apkVersionName);
 		if (!apkfile.exists()) {
 			return;
 		}

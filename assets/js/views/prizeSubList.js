@@ -1,4 +1,4 @@
-﻿define('views/prizeSubList',['zepto','ui/sl','ui/tabs','app','views/loading'],function (require,exports,module) {
+﻿define('views/prizeSubList',['zepto','ui/sl','ui/tabs','app','views/loading'],function(require,exports,module) {
     var $=require('zepto'),
         sl=require('ui/sl'),
         app=require('app'),
@@ -12,7 +12,7 @@
             'tap .J_Back': 'back',
             'tap .J_List [data-id]': 'toPrize'
         },
-        toPrize: function (e) {
+        toPrize: function(e) {
             var $target=$(e.currentTarget),
                 id=$target.attr('data-wid');
 
@@ -20,32 +20,43 @@
 
             this.to('/prize.html');
         },
-        onCreate: function () {
+        onCreate: function() {
             var that=this;
 
             that.id=that.route.data.id;
 
             that.data={};
 
-            that.$el.loading('load',{
-                url: '/api/CPService/QueryLotteryAnnouncement/?ct=json&gameid='+that.id+'&wagerissue=&qsnum=10',
-                success: function (res) {
-                    console.log(res);
+            that.$el.loading({
+                keys: ['curindex','len']
+            }).loading('load',{
+                url: '/api/CPService/QueryAnnouncementList/?ct=json&gameid='+that.id+'&wagerissue=&qsnum=10',
+                success: function(res) {
+                    $.each(res.Data,function(i,item) {
+                        that.data['data_'+item.WagerIssue]=item;
+                        item.Nums=item.LotteryNum.split(',');
+                    });
+                    res.isFirst=true;
 
-                    $.each(res.Data,function (i,item) {
+                    that.$('.J_List').html(that.tmpl('list',res));
+                },
+                refresh: function(res) {
+                    $.each(res.Data,function(i,item) {
                         that.data['data_'+item.WagerIssue]=item;
                         item.Nums=item.LotteryNum.split(',');
                     });
 
-                    that.$('.J_List').html(that.tmpl('list',res));
+                    res.isFirst=false;
+
+                    that.$('.J_List').append(that.tmpl('list',res));
                 }
             });
         },
-        onStart: function () {
+        onStart: function() {
         },
-        onResume: function () {
+        onResume: function() {
         },
-        onDestory: function () {
+        onDestory: function() {
         }
     });
 });
